@@ -3,15 +3,17 @@
 Provides reusable fixtures for testing FastAPI endpoints and configurations.
 """
 
+from collections.abc import Generator
+
 import pytest
 from fastapi.testclient import TestClient
 
-from app.main import create_app
 from app.config import Settings
+from app.main import create_app
 
 
 @pytest.fixture
-def settings() -> Settings:
+def settings() -> Generator[Settings, None, None]:
     """Provide test settings with safe defaults.
 
     These settings use local/test values and should never connect to
@@ -20,7 +22,7 @@ def settings() -> Settings:
     Yields:
         Settings: Test configuration.
     """
-    return Settings(
+    yield Settings(
         environment="testing",
         debug=True,
         supabase_url="https://test.supabase.co",
@@ -35,7 +37,7 @@ def settings() -> Settings:
 
 
 @pytest.fixture
-def client() -> TestClient:
+def client() -> Generator[TestClient, None, None]:
     """Provide a TestClient for endpoint testing.
 
     Creates a fresh FastAPI app instance and wraps it in a test client
@@ -45,4 +47,4 @@ def client() -> TestClient:
         TestClient: Configured test client.
     """
     app = create_app()
-    return TestClient(app)
+    yield TestClient(app)

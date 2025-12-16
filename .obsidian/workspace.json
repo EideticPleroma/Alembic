@@ -11,16 +11,14 @@
             "id": "4f207a66f28c2699",
             "type": "leaf",
             "state": {
-              "type": "kanban",
+              "type": "markdown",
               "state": {
-                "file": "obsidian/02-project/kanban.md",
-                "kanbanViewState": {
-                  "kanban-plugin": "board",
-                  "list-collapse": []
-                }
+                "file": "obsidian/02-project/milestones.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-trello",
-              "title": "kanban"
+              "icon": "lucide-file",
+              "title": "milestones"
             }
           }
         ]
@@ -96,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "obsidian/02-project/kanban.md",
+                "file": "obsidian/02-project/milestones.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -106,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for kanban"
+              "title": "Backlinks for milestones"
             }
           },
           {
@@ -115,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "obsidian/02-project/kanban.md",
+                "file": "obsidian/02-project/milestones.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from kanban"
+              "title": "Outgoing links from milestones"
             }
           },
           {
@@ -158,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "obsidian/02-project/kanban.md",
+                "file": "obsidian/02-project/milestones.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of kanban"
+              "title": "Outline of milestones"
             }
           },
           {
@@ -223,6 +221,27 @@
   },
   "active": "4f207a66f28c2699",
   "lastOpenFiles": [
+    "pytest-cache-files-l0gmrbnx",
+    "frontend/node_modules/tailwindcss/plugin.js",
+    "frontend/node_modules/jiti/dist/plugins/import-meta-env.d.ts",
+    "frontend/node_modules/jiti/dist/plugins/babel-plugin-transform-import-meta.d.ts",
+    "frontend/node_modules/jiti/dist/utils.d.ts",
+    "frontend/node_modules/jiti/dist/types.d.ts",
+    "frontend/node_modules/jiti/dist/plugins",
+    "frontend/node_modules/jiti/dist/jiti.js",
+    "frontend/node_modules/jiti/dist/jiti.d.ts",
+    "frontend/node_modules/jiti/dist/babel.js",
+    "frontend/node_modules/jiti/dist/babel.d.ts",
+    "frontend/node_modules/run-parallel/README.md",
+    "frontend/node_modules/merge2/README.md",
+    "frontend/node_modules/is-number/README.md",
+    "frontend/node_modules/to-regex-range/README.md",
+    "frontend/node_modules/fill-range/README.md",
+    "frontend/node_modules/is-extglob/README.md",
+    "frontend/node_modules/cssesc/README.md",
+    "frontend/node_modules/tslib/SECURITY.md",
+    "frontend/node_modules/tslib/README.md",
+    "obsidian/02-project/kanban.md",
     "frontend/public/cards/Wands14.png",
     "frontend/public/cards/Wands13.png",
     "frontend/public/cards/Wands12.png",
@@ -233,20 +252,8 @@
     "frontend/public/cards/Wands07.png",
     "frontend/public/cards/Wands06.png",
     "frontend/public/cards/Wands05.png",
-    "frontend/public/cards/Wands04.png",
-    "frontend/node_modules/@eslint/js/src/configs/eslint-recommended.js",
-    "frontend/node_modules/@eslint/js/src/configs/eslint-all.js",
-    "frontend/node_modules/@eslint/js/src/index.js",
-    "frontend/node_modules/@eslint/js/src/configs",
-    "frontend/node_modules/@eslint/js/src",
-    "backend/tests/unit/__pycache__/test_config.cpython-310-pytest-9.0.1.pyc",
-    "backend/tests/unit/__pycache__/test_health.cpython-310-pytest-9.0.1.pyc",
-    "backend/tests/unit/__pycache__/__init__.cpython-310.pyc",
-    "backend/tests/unit/__pycache__",
-    "backend/app/__pycache__/config.cpython-310.pyc",
     "backend/README.md",
     "Initialize FastAPI project.md",
-    "obsidian/02-project/kanban.md",
     "TESTING_RULES_UPDATE.md",
     "frontend/TESTING.md",
     "frontend/node_modules/prettier/THIRD-PARTY-NOTICES.md",
@@ -259,15 +266,6 @@
     "frontend/node_modules/y18n/CHANGELOG.md",
     "frontend/node_modules/graphql/README.md",
     "frontend/node_modules/whatwg-mimetype/README.md",
-    "frontend/node_modules/headers-polyfill/README.md",
-    "frontend/node_modules/cookie/README.md",
-    "frontend/node_modules/decimal.js/README.md",
-    "frontend/node_modules/decimal.js/LICENCE.md",
-    "frontend/node_modules/@open-draft/logger/README.md",
-    "frontend/node_modules/log-update/readme.md",
-    "frontend/node_modules/path-to-regexp/Readme.md",
-    "frontend/node_modules/colorette/README.md",
-    "frontend/node_modules/colorette/LICENSE.md",
-    "frontend/node_modules/delayed-stream/Readme.md"
+    "frontend/node_modules/headers-polyfill/README.md"
   ]
 }

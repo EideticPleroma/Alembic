@@ -46,7 +46,7 @@ class Settings(BaseSettings):
 
     @field_validator("cors_origins", mode="before")
     @classmethod
-    def parse_cors_origins(cls, v):
+    def parse_cors_origins(cls, v: str | list[str]) -> list[str]:
         """Parse CORS origins from comma-separated string to list."""
         if isinstance(v, str):
             return [origin.strip() for origin in v.split(",") if origin.strip()]
@@ -61,4 +61,4 @@ def get_settings() -> Settings:
     Returns:
         Settings: Application configuration loaded from environment.
     """
-    return Settings()
+    return Settings()  # type: ignore[call-arg]

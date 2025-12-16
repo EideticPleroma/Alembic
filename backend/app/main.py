@@ -10,6 +10,7 @@ from typing import Any
 import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import ValidationError
 
 from app.api.routers import health
 from app.config import Settings, get_settings
@@ -49,8 +50,8 @@ def create_app() -> FastAPI:
     """
     try:
         settings = get_settings()
-    except Exception:
-        logger.warning("settings_load_failed", using_defaults=True)
+    except ValidationError as e:
+        logger.warning("settings_load_failed", error=str(e), using_defaults=True)
         settings = Settings(
             supabase_url="https://default.supabase.co",
             supabase_key="default",

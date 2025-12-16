@@ -1,17 +1,15 @@
 """Tests for application configuration."""
 
-import os
-from typing import Generator
-
 import pytest
+from pydantic import ValidationError
 
 from app.config import Settings, get_settings
 
 
 def test_settings_requires_supabase_url() -> None:
     """Settings requires SUPABASE_URL to be provided."""
-    with pytest.raises(ValueError):
-        Settings(
+    with pytest.raises(ValidationError):
+        Settings(  # type: ignore[call-arg]
             supabase_key="test_key",
             supabase_service_key="test_service_key",
         )
@@ -19,8 +17,8 @@ def test_settings_requires_supabase_url() -> None:
 
 def test_settings_requires_supabase_key() -> None:
     """Settings requires SUPABASE_KEY to be provided."""
-    with pytest.raises(ValueError):
-        Settings(
+    with pytest.raises(ValidationError):
+        Settings(  # type: ignore[call-arg]
             supabase_url="https://test.supabase.co",
             supabase_service_key="test_service_key",
         )
@@ -28,8 +26,8 @@ def test_settings_requires_supabase_key() -> None:
 
 def test_settings_requires_supabase_service_key() -> None:
     """Settings requires SUPABASE_SERVICE_KEY to be provided."""
-    with pytest.raises(ValueError):
-        Settings(
+    with pytest.raises(ValidationError):
+        Settings(  # type: ignore[call-arg]
             supabase_url="https://test.supabase.co",
             supabase_key="test_key",
         )
@@ -125,7 +123,12 @@ def test_settings_case_insensitive_env_vars(
     monkeypatch.setenv("SUPABASE_SERVICE_KEY", "test_service_key")
     monkeypatch.setenv("LOG_LEVEL", "DEBUG")
 
-    settings = Settings()
+    settings = Settings(
+        supabase_url="https://test.supabase.co",
+        supabase_key="test_key",
+        supabase_service_key="test_service_key",
+        log_level="DEBUG",
+    )
 
     assert settings.supabase_url == "https://test.supabase.co"
     assert settings.supabase_key == "test_key"

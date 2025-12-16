@@ -13,14 +13,10 @@ kanban-plugin: board
 
 ## Phase 0: Foundation
 
-- [ ] Set up local Ollama for development
-- [ ] Configure environment variables
-- [ ] Set up Git repository
 
 
 ## Phase 1: Core Reading
 
-- [ ] Create 78-card deck data (JSON)
 - [ ] Implement card draw logic
 - [ ] Build three-card spread
 - [ ] Design Hermetic system prompt
@@ -72,6 +68,10 @@ kanban-plugin: board
 
 ## Done
 
+- [ ] Create 78-card deck data (JSON)
+- [ ] Set up local Ollama for development
+- [ ] Configure environment variables
+- [ ] Set up Git repository
 - [ ] [[Initialize FastAPI project]]
 - [x] Initialize Next.js 15 project
 - [x] Create project documentation
