@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: system-ui, -apple-system, sans-serif;
+    --font-cinzel: system-ui, -apple-system, sans-serif;
+    
+    /* Hermetic palette CSS variables */
+    --color-void: #2d1b4e;
+    --color-gold: #c9a227;
+    --color-silver: #a8a9ad;
+    --color-midnight: #191970;
+    --color-cream: #f5f5dc;
+
+    /* Light mode */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.6%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.6%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.6%;
+    --primary: 263 47% 21%;
+    --primary-foreground: 45 76% 47%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 45 93.4% 47.5%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 45 93.4% 47.5%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark mode */
+    --background: 225 20% 10%;
+    --foreground: 0 0% 98%;
+    --card: 225 20% 13%;
+    --card-foreground: 0 0% 98%;
+    --popover: 225 20% 13%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 45 76% 47%;
+    --primary-foreground: 263 47% 21%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 215 16.3% 40.6%;
+    --muted-foreground: 217.9 32.6% 64.5%;
+    --accent: 45 93.4% 47.5%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 45 93.4% 47.5%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Hermetic design system utilities */
+@layer components {
+  .hermetic-gradient {
+    @apply bg-gradient-void;
+  }
+
+  .hermetic-text {
+    @apply text-gold dark:text-gold;
+  }
+
+  .card-hermetic {
+    @apply rounded-lg border border-border bg-card p-4 shadow-md;
+  }
+
+  .fade-in {
+    @apply animate-fade-in;
+  }
+}
+
+/* Custom animations */
+@supports (perspective: 1000px) {
+  .flip-card {
+    perspective: 1000px;
+  }
+
+  .flip-card-inner {
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+  }
+
+  .flip-card-inner.flipped {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    backface-visibility: hidden;
+  }
+
+  .flip-card-back {
+    transform: rotateY(180deg);
+  }
+}
