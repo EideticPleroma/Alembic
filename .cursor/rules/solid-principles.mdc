@@ -1,0 +1,242 @@
+# SOLID Principles Guide
+
+---
+description: SOLID principles enforcement and code quality review lens
+alwaysApply: true
+---
+
+## Overview
+
+SOLID principles are the foundation of maintainable, extensible code. In Alembic, we use SOLID as both a **design guide** and a **review lens**.
+
+## The Principles
+
+### S - Single Responsibility Principle (SRP)
+
+**Definition**: A class/module should have only one reason to change.
+
+**Test**: Can you describe this component's purpose in one sentence without using "and"?
+
+**Good Example**:
+```python
+# Each class has ONE responsibility
+class CardDrawer:
+    """Handles random card selection from a deck."""
+    def draw(self, deck: Deck, count: int) -> list[Card]: ...
+
+class SpreadInterpreter:
+    """Formats cards into spread positions."""
+    def arrange(self, cards: list[Card], spread_type: SpreadType) -> Spread: ...
+
+class ReadingPersistence:
+    """Stores and retrieves readings from database."""
+    async def save(self, reading: Reading) -> str: ...
+```
+
+**Bad Example**:
+```python
+# This class does too many things
+class TarotService:
+    def draw_cards(self): ...
+    def interpret_spread(self): ...
+    def save_to_database(self): ...
+    def send_email_notification(self): ...
+    def charge_user_credits(self): ...
+```
+
+### O - Open/Closed Principle (OCP)
+
+**Definition**: Open for extension, closed for modification.
+
+**Test**: Can we add new behavior without modifying existing code?
+
+**Good Example**:
+```python
+# New spreads can be added without modifying existing code
+class Spread(Protocol):
+    name: str
+    positions: list[str]
+    def validate(self, cards: list[Card]) -> bool: ...
+
+class ThreeCardSpread(Spread):
+    name = "Three Card"
+    positions = ["Past", "Present", "Future"]
+
+class CelticCrossSpread(Spread):  # Added later, no changes to existing code
+    name = "Celtic Cross"
+    positions = ["Significator", "Crossing", ...]
+```
+
+**Bad Example**:
+```python
+# Adding a new spread requires modifying this function
+def create_spread(spread_type: str, cards: list[Card]):
+    if spread_type == "three_card":
+        return ThreeCardSpread(cards)
+    elif spread_type == "celtic_cross":  # Had to modify existing code
+        return CelticCrossSpread(cards)
+```
+
+### L - Liskov Substitution Principle (LSP)
+
+**Definition**: Subtypes must be substitutable for their base types.
+
+**Test**: Can any implementation be swapped without breaking behavior?
+
+**Good Example**:
+```python
+# Any LLM backend can be used interchangeably
+class LLMBackend(Protocol):
+    async def generate(self, prompt: str, system: str) -> str: ...
+
+class GrokBackend(LLMBackend):
+    async def generate(self, prompt: str, system: str) -> str: ...
+
+class OllamaBackend(LLMBackend):
+    async def generate(self, prompt: str, system: str) -> str: ...
+
+# Code works with any backend
+async def get_interpretation(llm: LLMBackend, prompt: str) -> str:
+    return await llm.generate(prompt, SYSTEM_PROMPT)
+```
+
+### I - Interface Segregation Principle (ISP)
+
+**Definition**: Clients should not depend on methods they don't use.
+
+**Test**: Are there methods in this interface that some implementations don't need?
+
+**Good Example**:
+```python
+# Separate interfaces for separate concerns
+class Readable(Protocol):
+    async def get(self, id: str) -> Reading: ...
+
+class Writable(Protocol):
+    async def save(self, reading: Reading) -> str: ...
+
+class Deletable(Protocol):
+    async def delete(self, id: str) -> bool: ...
+
+# Classes implement only what they need
+class ReadOnlyReadingRepo(Readable):
+    async def get(self, id: str) -> Reading: ...
+
+class FullReadingRepo(Readable, Writable, Deletable):
+    async def get(self, id: str) -> Reading: ...
+    async def save(self, reading: Reading) -> str: ...
+    async def delete(self, id: str) -> bool: ...
+```
+
+**Bad Example**:
+```python
+# Fat interface forces implementations to have unused methods
+class Repository(Protocol):
+    async def get(self, id: str): ...
+    async def save(self, entity): ...
+    async def delete(self, id: str): ...
+    async def bulk_import(self, entities): ...  # Not all repos need this
+    async def export_to_csv(self): ...  # Mixing concerns
+```
+
+### D - Dependency Inversion Principle (DIP)
+
+**Definition**: Depend on abstractions, not concretions.
+
+**Test**: Are we importing concrete classes or abstract protocols?
+
+**Good Example**:
+```python
+# Depend on abstractions (Protocol/ABC)
+from typing import Protocol
+
+class LLMBackend(Protocol):
+    async def generate(self, prompt: str) -> str: ...
+
+class ReadingService:
+    def __init__(self, llm: LLMBackend):  # Depends on abstraction
+        self.llm = llm
+    
+    async def create_reading(self, question: str) -> Reading:
+        interpretation = await self.llm.generate(question)
+        return Reading(interpretation=interpretation)
+
+# Concrete implementations injected at runtime
+reading_service = ReadingService(llm=GrokBackend())  # or OllamaBackend()
+```
+
+**Bad Example**:
+```python
+# Depends on concrete implementation
+from app.core.llm.grok import GrokBackend
+
+class ReadingService:
+    def __init__(self):
+        self.llm = GrokBackend()  # Tightly coupled, hard to test/swap
+```
+
+## Pre-Implementation Checklist
+
+Before writing code, verify:
+
+- [ ] **SRP**: Can I describe this in one sentence?
+- [ ] **OCP**: Can new variations be added without modifying this?
+- [ ] **LSP**: Can implementations be swapped safely?
+- [ ] **ISP**: Does every method belong here?
+- [ ] **DIP**: Am I depending on abstractions?
+
+## Code Review Lens
+
+When reviewing changes, ask:
+
+1. "This class seems to do X and Y - should we split it?" (SRP)
+2. "If we need to add Z, would we modify this code?" (OCP)
+3. "Can we swap this implementation in tests?" (LSP/DIP)
+4. "Are there methods here that some consumers won't use?" (ISP)
+5. "Are we importing concrete classes or protocols?" (DIP)
+
+## SOLID in FastAPI
+
+```python
+# Dependency injection enables DIP
+from fastapi import Depends
+
+def get_llm_backend() -> LLMBackend:
+    return GrokBackend()  # Or OllamaBackend based on config
+
+@router.post("/reading")
+async def create_reading(
+    request: ReadingRequest,
+    llm: LLMBackend = Depends(get_llm_backend),  # Injected abstraction
+):
+    service = ReadingService(llm)
+    return await service.create_reading(request.question)
+```
+
+## SOLID in React/Next.js
+
+```typescript
+// Component composition enables OCP
+interface CardDisplayProps {
+  card: TarotCard;
+  renderer: CardRenderer;  // Abstraction, not concrete
+}
+
+function CardDisplay({ card, renderer }: CardDisplayProps) {
+  return renderer.render(card);  // Any renderer works
+}
+
+// New renderers can be added without modifying CardDisplay
+const animatedRenderer: CardRenderer = { render: (card) => <AnimatedCard card={card} /> };
+const simpleRenderer: CardRenderer = { render: (card) => <SimpleCard card={card} /> };
+```
+
+## When SOLID Feels Heavy
+
+For simple cases, pragmatism wins:
+- One-off scripts don't need full abstraction
+- Prototypes can violate SOLID temporarily
+- Small utilities can be concrete
+
+But document these decisions and refactor before they become patterns.
+

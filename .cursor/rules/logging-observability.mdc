@@ -1,0 +1,424 @@
+# Logging and Observability
+
+---
+description: Structured logging, LLM call tracing, and monitoring patterns
+globs: ["**/*.py", "**/*.ts"]
+alwaysApply: false
+---
+
+## Logging Philosophy
+
+Logs are for debugging, monitoring, and auditing. They should tell a story of what happened and why.
+
+**Principle**: Log enough to debug issues, but not so much that you leak privacy or drown in noise.
+
+## Structured Logging (Python)
+
+### Setup with structlog
+
+```python
+# app/core/logging.py
+import structlog
+import logging
+import sys
+
+def setup_logging(log_level: str = "INFO"):
+    """Configure structured logging for the application."""
+    
+    structlog.configure(
+        processors=[
+            structlog.contextvars.merge_contextvars,
+            structlog.processors.add_log_level,
+            structlog.processors.TimeStamper(fmt="iso"),
+            structlog.processors.StackInfoRenderer(),
+            structlog.processors.format_exc_info,
+            structlog.processors.JSONRenderer(),
+        ],
+        wrapper_class=structlog.make_filtering_bound_logger(
+            getattr(logging, log_level)
+        ),
+        context_class=dict,
+        logger_factory=structlog.PrintLoggerFactory(),
+        cache_logger_on_first_use=True,
+    )
+
+def get_logger(name: str) -> structlog.BoundLogger:
+    """Get a logger instance with module context."""
+    return structlog.get_logger(name)
+```
+
+### Usage
+
+```python
+from app.core.logging import get_logger
+
+logger = get_logger(__name__)
+
+async def create_reading(request: ReadingRequest, user: User):
+    # Bind context for this request
+    log = logger.bind(
+        user_id=user.id,
+        spread_type=request.spread_type.value,
+        request_id=str(uuid4()),
+    )
+    
+    log.info("reading_started")
+    
+    try:
+        cards = draw_cards(3)
+        log.debug("cards_drawn", card_count=len(cards))
+        
+        interpretation = await llm.generate(prompt)
+        log.info(
+            "interpretation_generated",
+            tokens_used=interpretation.usage.total_tokens,
+            latency_ms=interpretation.latency_ms,
+        )
+        
+        reading = await db.save(...)
+        log.info("reading_completed", reading_id=reading.id)
+        
+        return reading
+        
+    except Exception as e:
+        log.exception("reading_failed", error=str(e))
+        raise
+```
+
+### Log Output (JSON)
+
+```json
+{
+  "event": "reading_completed",
+  "level": "info",
+  "timestamp": "2025-12-16T14:30:00.000Z",
+  "user_id": "user_123",
+  "spread_type": "three_card",
+  "request_id": "abc-123",
+  "reading_id": "reading_456"
+}
+```
+
+## What to Log
+
+### Always Log
+
+| Event | Level | Fields |
+|-------|-------|--------|
+| Request received | INFO | endpoint, method, user_id |
+| Request completed | INFO | endpoint, status, duration_ms |
+| Authentication success | INFO | user_id |
+| Authentication failure | WARN | ip_address, reason |
+| Reading created | INFO | reading_id, spread_type |
+| Payment processed | INFO | user_id, amount, subscription_id |
+| Error occurred | ERROR | error_type, error_message |
+| Exception | ERROR | full stack trace |
+
+### Never Log
+
+- Passwords or tokens
+- Full credit card numbers
+- Personal reading questions (too sensitive)
+- Full LLM responses (privacy + cost)
+- Session tokens
+- API keys
+
+### Sanitization
+
+```python
+def sanitize_for_logging(data: dict) -> dict:
+    """Remove sensitive fields before logging."""
+    sensitive_keys = {'password', 'token', 'api_key', 'secret', 'question'}
+    return {
+        k: '[REDACTED]' if k.lower() in sensitive_keys else v
+        for k, v in data.items()
+    }
+
+# Usage
+log.info("request_received", **sanitize_for_logging(request.dict()))
+```
+
+## LLM Call Tracing
+
+### Track LLM Metrics
+
+```python
+import time
+from dataclasses import dataclass
+
+@dataclass
+class LLMCallMetrics:
+    model: str
+    prompt_tokens: int
+    completion_tokens: int
+    total_tokens: int
+    latency_ms: float
+    cost_usd: float
+
+async def generate_with_tracing(
+    prompt: str,
+    system: str,
+    logger: structlog.BoundLogger,
+) -> tuple[str, LLMCallMetrics]:
+    """Generate LLM response with full tracing."""
+    
+    start_time = time.perf_counter()
+    
+    response = await acompletion(
+        model="xai/grok-4.1-fast",
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": prompt},
+        ],
+    )
+    
+    latency_ms = (time.perf_counter() - start_time) * 1000
+    
+    metrics = LLMCallMetrics(
+        model="grok-4.1-fast",
+        prompt_tokens=response.usage.prompt_tokens,
+        completion_tokens=response.usage.completion_tokens,
+        total_tokens=response.usage.total_tokens,
+        latency_ms=latency_ms,
+        cost_usd=calculate_cost(response.usage),
+    )
+    
+    logger.info(
+        "llm_call_completed",
+        model=metrics.model,
+        prompt_tokens=metrics.prompt_tokens,
+        completion_tokens=metrics.completion_tokens,
+        latency_ms=round(metrics.latency_ms, 2),
+        cost_usd=round(metrics.cost_usd, 6),
+    )
+    
+    return response.choices[0].message.content, metrics
+
+def calculate_cost(usage) -> float:
+    """Calculate cost for Grok 4.1 Fast."""
+    input_cost = usage.prompt_tokens * 0.20 / 1_000_000
+    output_cost = usage.completion_tokens * 0.50 / 1_000_000
+    return input_cost + output_cost
+```
+
+## Request Tracing
+
+### Correlation IDs
+
+```python
+from contextvars import ContextVar
+from uuid import uuid4
+
+request_id_ctx: ContextVar[str] = ContextVar('request_id', default='')
+
+@app.middleware("http")
+async def add_request_id(request: Request, call_next):
+    request_id = request.headers.get('X-Request-ID', str(uuid4()))
+    request_id_ctx.set(request_id)
+    
+    response = await call_next(request)
+    response.headers['X-Request-ID'] = request_id
+    
+    return response
+```
+
+### Full Request Logging
+
+```python
+import time
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.perf_counter()
+    
+    logger.info(
+        "request_started",
+        method=request.method,
+        path=request.url.path,
+        request_id=request_id_ctx.get(),
+    )
+    
+    response = await call_next(request)
+    
+    duration_ms = (time.perf_counter() - start_time) * 1000
+    
+    logger.info(
+        "request_completed",
+        method=request.method,
+        path=request.url.path,
+        status_code=response.status_code,
+        duration_ms=round(duration_ms, 2),
+        request_id=request_id_ctx.get(),
+    )
+    
+    return response
+```
+
+## Error Tracking (Sentry)
+
+### Setup
+
+```python
+# app/core/sentry.py
+import sentry_sdk
+from sentry_sdk.integrations.fastapi import FastAPIIntegration
+
+def setup_sentry(dsn: str, environment: str):
+    sentry_sdk.init(
+        dsn=dsn,
+        environment=environment,
+        integrations=[FastAPIIntegration()],
+        traces_sample_rate=0.1,  # 10% of transactions
+        profiles_sample_rate=0.1,
+        send_default_pii=False,  # Don't send personal data
+    )
+```
+
+### Custom Context
+
+```python
+from sentry_sdk import set_user, set_context
+
+async def create_reading(request: ReadingRequest, user: User):
+    # Set user context for Sentry
+    set_user({"id": user.id, "email": user.email})
+    
+    # Set custom context
+    set_context("reading", {
+        "spread_type": request.spread_type.value,
+        "question_length": len(request.question),
+    })
+    
+    # ... rest of function
+```
+
+### Capturing Errors
+
+```python
+from sentry_sdk import capture_exception, capture_message
+
+try:
+    await llm.generate(prompt)
+except LLMError as e:
+    capture_exception(e)
+    raise
+
+# Or for warnings
+if response_time > 5000:
+    capture_message(
+        f"Slow LLM response: {response_time}ms",
+        level="warning",
+    )
+```
+
+## Frontend Logging
+
+### Client-Side Error Tracking
+
+```typescript
+// lib/sentry.ts
+import * as Sentry from '@sentry/nextjs';
+
+export function initSentry() {
+  Sentry.init({
+    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    environment: process.env.NODE_ENV,
+    tracesSampleRate: 0.1,
+  });
+}
+
+// Usage
+try {
+  await createReading(request);
+} catch (error) {
+  Sentry.captureException(error);
+  throw error;
+}
+```
+
+### Client Logging (Dev Only)
+
+```typescript
+// lib/logger.ts
+const isDev = process.env.NODE_ENV === 'development';
+
+export const logger = {
+  debug: (...args: any[]) => isDev && console.debug('[DEBUG]', ...args),
+  info: (...args: any[]) => isDev && console.info('[INFO]', ...args),
+  warn: (...args: any[]) => console.warn('[WARN]', ...args),
+  error: (...args: any[]) => console.error('[ERROR]', ...args),
+};
+```
+
+## Metrics and Dashboards
+
+### Key Metrics to Track
+
+| Metric | Type | Alert Threshold |
+|--------|------|-----------------|
+| Request latency p99 | Histogram | > 3s |
+| Error rate | Counter | > 1% |
+| LLM latency p99 | Histogram | > 10s |
+| LLM cost per hour | Gauge | > $5 |
+| Active users | Gauge | - |
+| Readings per hour | Counter | - |
+| Payment failures | Counter | > 5% |
+
+### Health Endpoint
+
+```python
+@router.get("/health")
+async def health_check():
+    """Health check endpoint for monitoring."""
+    checks = {
+        "database": await check_database(),
+        "llm": await check_llm(),
+        "stripe": await check_stripe(),
+    }
+    
+    all_healthy = all(checks.values())
+    
+    return {
+        "status": "healthy" if all_healthy else "degraded",
+        "checks": checks,
+        "timestamp": datetime.utcnow().isoformat(),
+    }
+```
+
+## Log Levels Guide
+
+| Level | Use For |
+|-------|---------|
+| DEBUG | Detailed debugging info (dev only) |
+| INFO | Normal operations (request flow, business events) |
+| WARN | Recoverable issues (retries, fallbacks) |
+| ERROR | Failures requiring attention |
+| CRITICAL | System-breaking issues |
+
+## Anti-Patterns
+
+```python
+# BAD: Logging too much
+logger.debug(f"Full LLM response: {response}")  # Privacy + noise
+
+# BAD: Logging sensitive data
+logger.info(f"User question: {question}")  # Privacy violation
+
+# BAD: Not using structured logging
+print(f"Error: {error}")  # Not queryable
+
+# BAD: Swallowing exceptions
+try:
+    await dangerous_operation()
+except Exception:
+    pass  # Silent failure
+
+# GOOD: Structured, appropriate level, no sensitive data
+logger.info(
+    "reading_created",
+    reading_id=reading.id,
+    spread_type=request.spread_type,
+    latency_ms=latency,
+)
+```
+

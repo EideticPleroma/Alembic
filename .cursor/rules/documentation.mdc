@@ -1,0 +1,285 @@
+# Documentation Standards
+
+---
+description: Documentation coverage requirements, update triggers, and format standards
+globs: ["docs/**/*", "**/*.md", "**/README*"]
+alwaysApply: false
+---
+
+## Documentation Philosophy
+
+Documentation is not an afterthought - it's part of the deliverable. Code without documentation is incomplete code.
+
+**Principle**: Write docs as you code, not after. Future-you will thank present-you.
+
+## Documentation Types
+
+### 1. Code Documentation (Docstrings)
+
+**Python (Google Style)**:
+
+```python
+def create_reading(
+    question: str,
+    spread_type: SpreadType,
+    user_id: str,
+) -> Reading:
+    """Create a new tarot reading for a user.
+    
+    Draws cards for the specified spread, generates an interpretation
+    using the LLM, and persists the reading to the database.
+    
+    Args:
+        question: The user's question or focus for the reading.
+        spread_type: Type of spread to use (e.g., THREE_CARD).
+        user_id: ID of the user requesting the reading.
+        
+    Returns:
+        A Reading object containing the cards, interpretation, and metadata.
+        
+    Raises:
+        InsufficientCreditsError: If user has no credits remaining.
+        LLMError: If interpretation generation fails.
+        
+    Example:
+        >>> reading = await create_reading(
+        ...     question="What should I focus on today?",
+        ...     spread_type=SpreadType.THREE_CARD,
+        ...     user_id="user_123"
+        ... )
+        >>> print(reading.interpretation)
+    """
+```
+
+**TypeScript (TSDoc)**:
+
+```typescript
+/**
+ * Draws and animates tarot cards for a spread.
+ * 
+ * @param cards - Array of cards to display
+ * @param onReveal - Callback fired when each card is revealed
+ * @returns Promise that resolves when animation completes
+ * 
+ * @example
+ * ```tsx
+ * await animateCardDraw(cards, (card, index) => {
+ *   console.log(`Revealed ${card.name} at position ${index}`);
+ * });
+ * ```
+ */
+async function animateCardDraw(
+  cards: TarotCard[],
+  onReveal?: (card: TarotCard, index: number) => void
+): Promise<void>
+```
+
+### 2. API Documentation
+
+Auto-generated from FastAPI, but enhance with:
+
+```python
+@router.post(
+    "/reading",
+    response_model=ReadingResponse,
+    summary="Create a new tarot reading",
+    description="""
+    Creates a new tarot reading by:
+    1. Validating user has sufficient credits/subscription
+    2. Drawing cards for the specified spread
+    3. Generating interpretation via Grok
+    4. Persisting the reading to database
+    
+    Rate limited to 10 requests per minute.
+    """,
+    responses={
+        200: {"description": "Reading created successfully"},
+        400: {"description": "Invalid request (missing question, invalid spread)"},
+        401: {"description": "Authentication required"},
+        402: {"description": "Insufficient credits"},
+        429: {"description": "Rate limit exceeded"},
+    },
+)
+async def create_reading(request: ReadingRequest) -> ReadingResponse:
+    ...
+```
+
+### 3. Architecture Documentation
+
+Location: `docs/architecture/`
+
+**system-overview.md** - High-level system design
+**data-model.md** - Database schema and relationships
+**api-design.md** - API structure and conventions
+
+### 4. Architecture Decision Records (ADRs)
+
+Location: `docs/decisions/`
+
+**Format**:
+```markdown
+# ADR-NNN: Title
+
+## Status
+[Proposed | Accepted | Deprecated | Superseded by ADR-XXX]
+
+## Date
+DD-MM-YYYY
+
+## Context
+What is the issue that we're seeing that is motivating this decision?
+
+## Decision
+What is the change that we're proposing and/or doing?
+
+## Consequences
+What becomes easier or more difficult because of this change?
+
+### Positive
+- Benefit 1
+- Benefit 2
+
+### Negative
+- Tradeoff 1
+- Tradeoff 2
+
+### Neutral
+- Side effect 1
+```
+
+### 5. Guides
+
+Location: `docs/guides/`
+
+How-to documentation for common tasks:
+- `local-development.md` - Setting up dev environment
+- `deployment.md` - Deploying to production
+- `stripe-setup.md` - Configuring Stripe
+- `adding-spreads.md` - How to add new tarot spreads
+
+## Update Triggers
+
+**Documentation MUST be updated when:**
+
+| Change | Documentation to Update |
+|--------|------------------------|
+| New feature | Guide (if user-facing), API docs |
+| API change | API docs, relevant guides |
+| Architecture change | ADR (new), system-overview.md |
+| Config change | deployment.md, .env.example |
+| New dependency | README.md, local-development.md |
+| Bug fix | None (unless behavior changes) |
+| Schema change | data-model.md |
+
+## README Structure
+
+```markdown
+# Alembic
+
+Brief description (1-2 sentences).
+
+## Features
+
+- Feature 1
+- Feature 2
+
+## Quick Start
+
+\`\`\`bash
+# Minimal steps to run locally
+\`\`\`
+
+## Documentation
+
+- [Architecture](docs/architecture/system-overview.md)
+- [API Reference](docs/api/)
+- [Development Guide](docs/guides/local-development.md)
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| ... | ... |
+
+## License
+
+[License type]
+```
+
+## Markdown Standards
+
+### Headings
+
+```markdown
+# Title (one per document)
+## Major Section
+### Subsection
+#### Detail (use sparingly)
+```
+
+### Code Blocks
+
+Always specify language:
+
+```markdown
+\`\`\`python
+def example():
+    pass
+\`\`\`
+
+\`\`\`typescript
+const example = () => {};
+\`\`\`
+
+\`\`\`bash
+npm install
+\`\`\`
+```
+
+### Tables
+
+```markdown
+| Column 1 | Column 2 | Column 3 |
+|----------|----------|----------|
+| Data 1   | Data 2   | Data 3   |
+```
+
+### Links
+
+```markdown
+[Link text](relative/path/to/file.md)
+[External link](https://example.com)
+```
+
+### Mermaid Diagrams
+
+```markdown
+\`\`\`mermaid
+flowchart LR
+    A[Start] --> B[Process]
+    B --> C[End]
+\`\`\`
+```
+
+## Documentation Checklist
+
+Before considering a feature complete:
+
+- [ ] Public functions/methods have docstrings
+- [ ] Complex logic has inline comments
+- [ ] API endpoints have OpenAPI descriptions
+- [ ] User-facing changes have guide updates
+- [ ] Architecture changes have ADRs
+- [ ] README is current
+- [ ] Example code runs correctly
+
+## Anti-Patterns
+
+**Avoid:**
+- Comments that restate the code
+- Outdated documentation (worse than none)
+- Documentation in non-standard locations
+- Huge monolithic docs (split by topic)
+- Screenshots without context
+- Links to external resources that may disappear
+

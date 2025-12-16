@@ -1,0 +1,374 @@
+# Error Handling Patterns
+
+---
+description: Exception hierarchy, error handling patterns, and user-facing error messages
+globs: ["**/*.py", "**/*.ts", "**/*.tsx"]
+alwaysApply: false
+---
+
+## Exception Hierarchy
+
+### Python Backend
+
+```python
+# app/core/exceptions.py
+
+class AlembicError(Exception):
+    """Base exception for all Alembic errors."""
+    
+    def __init__(self, message: str, code: str | None = None):
+        super().__init__(message)
+        self.message = message
+        self.code = code or "ALEMBIC_ERROR"
+
+
+# Domain Errors
+class TarotError(AlembicError):
+    """Tarot-related errors."""
+    pass
+
+
+class DeckExhaustedError(TarotError):
+    """Raised when trying to draw more cards than available."""
+    
+    def __init__(self, requested: int, available: int):
+        super().__init__(
+            f"Cannot draw {requested} cards, only {available} available",
+            code="DECK_EXHAUSTED"
+        )
+
+
+class InvalidSpreadError(TarotError):
+    """Raised for invalid spread configuration."""
+    pass
+
+
+# LLM Errors
+class LLMError(AlembicError):
+    """LLM-related errors."""
+    pass
+
+
+class LLMTimeoutError(LLMError):
+    """Raised when LLM request times out."""
+    
+    def __init__(self, timeout_seconds: int):
+        super().__init__(
+            f"LLM request timed out after {timeout_seconds}s",
+            code="LLM_TIMEOUT"
+        )
+
+
+class LLMRateLimitError(LLMError):
+    """Raised when hitting LLM rate limits."""
+    pass
+
+
+# User/Business Errors  
+class UserError(AlembicError):
+    """User-related errors."""
+    pass
+
+
+class InsufficientCreditsError(UserError):
+    """Raised when user has no credits for reading."""
+    
+    def __init__(self, required: int, available: int):
+        super().__init__(
+            f"Insufficient credits: {required} required, {available} available",
+            code="INSUFFICIENT_CREDITS"
+        )
+
+
+class SubscriptionRequiredError(UserError):
+    """Raised when feature requires subscription."""
+    pass
+
+
+# Validation Errors
+class ValidationError(AlembicError):
+    """Input validation errors."""
+    pass
+```
+
+### TypeScript Frontend
+
+```typescript
+// lib/errors.ts
+
+export class AlembicError extends Error {
+  code: string;
+  
+  constructor(message: string, code: string = 'ALEMBIC_ERROR') {
+    super(message);
+    this.name = 'AlembicError';
+    this.code = code;
+  }
+}
+
+export class APIError extends AlembicError {
+  status: number;
+  
+  constructor(message: string, status: number, code: string) {
+    super(message, code);
+    this.name = 'APIError';
+    this.status = status;
+  }
+}
+
+export class NetworkError extends AlembicError {
+  constructor(message: string = 'Network request failed') {
+    super(message, 'NETWORK_ERROR');
+    this.name = 'NetworkError';
+  }
+}
+```
+
+## Error Handling Patterns
+
+### FastAPI Exception Handlers
+
+```python
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+
+app = FastAPI()
+
+@app.exception_handler(AlembicError)
+async def alembic_error_handler(request: Request, exc: AlembicError):
+    return JSONResponse(
+        status_code=400,
+        content={
+            "error": exc.code,
+            "message": exc.message,
+        }
+    )
+
+@app.exception_handler(InsufficientCreditsError)
+async def credits_error_handler(request: Request, exc: InsufficientCreditsError):
+    return JSONResponse(
+        status_code=402,  # Payment Required
+        content={
+            "error": exc.code,
+            "message": "You've run out of credits. Purchase more to continue.",
+            "upgrade_url": "/pricing",
+        }
+    )
+
+@app.exception_handler(LLMTimeoutError)
+async def llm_timeout_handler(request: Request, exc: LLMTimeoutError):
+    return JSONResponse(
+        status_code=503,
+        content={
+            "error": exc.code,
+            "message": "Our oracle is taking longer than usual. Please try again.",
+            "retry_after": 30,
+        }
+    )
+```
+
+### API Endpoint Error Handling
+
+```python
+@router.post("/reading")
+async def create_reading(request: ReadingRequest):
+    try:
+        reading = await reading_service.create(request)
+        return reading
+        
+    except InsufficientCreditsError as e:
+        # Re-raise for specific handler
+        raise
+        
+    except LLMError as e:
+        # Log technical details, return friendly message
+        logger.exception("LLM error during reading creation")
+        raise HTTPException(
+            status_code=503,
+            detail="Unable to generate interpretation. Please try again."
+        )
+        
+    except Exception as e:
+        # Catch-all for unexpected errors
+        logger.exception("Unexpected error in create_reading")
+        raise HTTPException(
+            status_code=500,
+            detail="An unexpected error occurred. Please try again."
+        )
+```
+
+### Retry Pattern for LLM Calls
+
+```python
+import asyncio
+from typing import TypeVar, Callable, Awaitable
+
+T = TypeVar('T')
+
+async def with_retry(
+    func: Callable[[], Awaitable[T]],
+    max_attempts: int = 3,
+    base_delay: float = 1.0,
+    max_delay: float = 30.0,
+    exceptions: tuple = (LLMTimeoutError, LLMRateLimitError),
+) -> T:
+    """Retry async function with exponential backoff."""
+    
+    last_exception = None
+    
+    for attempt in range(max_attempts):
+        try:
+            return await func()
+            
+        except exceptions as e:
+            last_exception = e
+            
+            if attempt < max_attempts - 1:
+                delay = min(base_delay * (2 ** attempt), max_delay)
+                logger.warning(
+                    f"Attempt {attempt + 1} failed: {e}. "
+                    f"Retrying in {delay}s..."
+                )
+                await asyncio.sleep(delay)
+            else:
+                logger.error(f"All {max_attempts} attempts failed")
+    
+    raise last_exception
+
+# Usage
+interpretation = await with_retry(
+    lambda: llm.generate(prompt),
+    max_attempts=3,
+)
+```
+
+### Graceful Degradation
+
+```python
+async def create_reading_with_fallback(request: ReadingRequest) -> Reading:
+    """Create reading with fallback to cached/generic interpretation."""
+    
+    try:
+        # Try primary LLM
+        interpretation = await llm.generate(prompt)
+        
+    except LLMError:
+        logger.warning("Primary LLM failed, trying fallback")
+        
+        try:
+            # Try fallback LLM (e.g., local Ollama)
+            interpretation = await fallback_llm.generate(prompt)
+            
+        except LLMError:
+            logger.warning("Fallback LLM failed, using cached interpretation")
+            
+            # Use pre-generated generic interpretation
+            interpretation = get_cached_interpretation(
+                spread_type=request.spread_type,
+                cards=cards,
+            )
+    
+    return Reading(cards=cards, interpretation=interpretation)
+```
+
+## User-Facing Error Messages
+
+### Principles
+
+1. **Be helpful, not technical** - Don't expose stack traces
+2. **Suggest next steps** - What can the user do?
+3. **Be honest but kind** - Don't blame the user
+4. **Stay in voice** - Maintain Hermetic/mystical tone where appropriate
+
+### Error Message Map
+
+| Internal Error | User Message |
+|---------------|--------------|
+| `LLMTimeoutError` | "The oracle is deep in contemplation. Please wait a moment and try again." |
+| `LLMRateLimitError` | "The veil between worlds is crowded. Please wait a few minutes." |
+| `InsufficientCreditsError` | "Your vessel requires replenishment. Visit the sanctum to continue your journey." |
+| `InvalidSpreadError` | "This spread configuration is not recognized. Please select a valid spread." |
+| `ValidationError` | "Your question needs refinement. Please provide more detail." |
+| `NetworkError` | "Connection to the ethereal realm was interrupted. Please check your connection." |
+| `500 Internal` | "An unexpected disturbance occurred. Our keepers have been notified." |
+
+### Frontend Error Display
+
+```typescript
+// components/ErrorMessage.tsx
+
+interface ErrorMessageProps {
+  error: APIError | null;
+}
+
+const errorMessages: Record<string, string> = {
+  'LLM_TIMEOUT': 'The oracle is deep in contemplation. Please wait a moment and try again.',
+  'INSUFFICIENT_CREDITS': 'Your vessel requires replenishment.',
+  'NETWORK_ERROR': 'Connection to the ethereal realm was interrupted.',
+  'DEFAULT': 'An unexpected disturbance occurred. Please try again.',
+};
+
+export function ErrorMessage({ error }: ErrorMessageProps) {
+  if (!error) return null;
+  
+  const message = errorMessages[error.code] || errorMessages['DEFAULT'];
+  
+  return (
+    <div role="alert" className="error-container">
+      <p>{message}</p>
+      {error.code === 'INSUFFICIENT_CREDITS' && (
+        <a href="/pricing">Visit the Sanctum</a>
+      )}
+    </div>
+  );
+}
+```
+
+## Logging Errors
+
+```python
+import structlog
+
+logger = structlog.get_logger()
+
+async def create_reading(request: ReadingRequest):
+    log = logger.bind(
+        user_id=request.user_id,
+        spread_type=request.spread_type,
+    )
+    
+    try:
+        reading = await reading_service.create(request)
+        log.info("reading_created", reading_id=reading.id)
+        return reading
+        
+    except InsufficientCreditsError as e:
+        log.warning("insufficient_credits", required=e.required)
+        raise
+        
+    except LLMError as e:
+        log.error("llm_error", error=str(e))
+        raise
+        
+    except Exception as e:
+        log.exception("unexpected_error")
+        raise
+```
+
+## Testing Errors
+
+```python
+import pytest
+from app.core.exceptions import InsufficientCreditsError
+
+async def test_reading_fails_without_credits():
+    """Verify proper error when user has no credits."""
+    user = create_user(credits=0)
+    
+    with pytest.raises(InsufficientCreditsError) as exc_info:
+        await reading_service.create(user_id=user.id, ...)
+    
+    assert exc_info.value.code == "INSUFFICIENT_CREDITS"
+    assert exc_info.value.available == 0
+```
+

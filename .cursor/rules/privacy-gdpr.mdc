@@ -1,0 +1,343 @@
+# Privacy and GDPR Compliance
+
+---
+description: Privacy requirements, GDPR compliance, and user data rights implementation
+globs: ["**/*"]
+alwaysApply: true
+---
+
+## Privacy Philosophy
+
+Alembic handles deeply personal data - users share their innermost questions, fears, and hopes. This trust demands the highest standards of privacy protection.
+
+**Principle**: Collect only what you need, protect what you collect, and give users control.
+
+## GDPR Requirements
+
+The General Data Protection Regulation (GDPR) applies to all EU users. Even if not legally required, these standards represent best practice.
+
+### Lawful Basis for Processing
+
+Document why you're collecting each piece of data:
+
+| Data | Purpose | Lawful Basis |
+|------|---------|--------------|
+| Email | Account identification, communication | Contract (account creation) |
+| Question text | Generate tarot reading | Contract (service delivery) |
+| Reading history | User requested feature | Contract (premium feature) |
+| Payment info | Process subscription | Contract (payment) |
+| Analytics | Improve service | Legitimate interest |
+
+### Data Minimization
+
+**Collect only what's necessary:**
+
+```python
+# Good - minimal data
+class UserCreate(BaseModel):
+    email: str
+    # That's it. No name, no phone, no address unless needed.
+
+# Bad - collecting unnecessary data
+class UserCreate(BaseModel):
+    email: str
+    full_name: str  # Why? Not needed for service
+    phone: str  # Why? Not used anywhere
+    date_of_birth: date  # Why? Not relevant
+```
+
+## User Rights Implementation
+
+### Right to Access (Article 15)
+
+Users can request all data held about them.
+
+```python
+@router.get("/user/data-export")
+async def export_user_data(user: User = Depends(get_current_user)) -> UserDataExport:
+    """Export all user data in machine-readable format."""
+    return UserDataExport(
+        profile=await get_user_profile(user.id),
+        readings=await get_all_readings(user.id),
+        conversations=await get_all_conversations(user.id),
+        subscription=await get_subscription_history(user.id),
+        exported_at=datetime.utcnow(),
+    )
+```
+
+### Right to Erasure / Right to be Forgotten (Article 17)
+
+Users can request deletion of all their data.
+
+```python
+@router.delete("/user/account")
+async def delete_account(
+    confirmation: DeleteConfirmation,
+    user: User = Depends(get_current_user),
+):
+    """Permanently delete user account and all associated data."""
+    if confirmation.confirm_text != "DELETE MY ACCOUNT":
+        raise HTTPException(400, "Confirmation text does not match")
+    
+    # Cancel any active subscriptions
+    await cancel_subscription(user.id)
+    
+    # Delete all user data
+    await delete_all_readings(user.id)
+    await delete_all_conversations(user.id)
+    await delete_user_profile(user.id)
+    
+    # Log the deletion (retain minimal audit log)
+    await log_security_event("account_deleted", user.id, {}, request.client.host)
+    
+    # Finally delete auth account
+    await supabase.auth.admin.delete_user(user.id)
+    
+    return {"message": "Account permanently deleted"}
+```
+
+### Right to Rectification (Article 16)
+
+Users can correct inaccurate data.
+
+```python
+@router.patch("/user/profile")
+async def update_profile(
+    updates: ProfileUpdate,
+    user: User = Depends(get_current_user),
+):
+    """Update user profile information."""
+    return await update_user_profile(user.id, updates)
+```
+
+### Right to Data Portability (Article 20)
+
+Users can export data in a common format.
+
+```python
+@router.get("/user/data-export/json")
+async def export_as_json(user: User = Depends(get_current_user)):
+    """Export all data as JSON file."""
+    data = await export_user_data(user)
+    return Response(
+        content=data.json(),
+        media_type="application/json",
+        headers={"Content-Disposition": f"attachment; filename=alembic-data-{user.id}.json"}
+    )
+```
+
+### Right to Object (Article 21)
+
+Users can opt out of certain processing.
+
+```python
+class UserPreferences(BaseModel):
+    marketing_emails: bool = False
+    analytics_tracking: bool = True
+    reading_history_enabled: bool = True
+
+@router.patch("/user/preferences")
+async def update_preferences(
+    prefs: UserPreferences,
+    user: User = Depends(get_current_user),
+):
+    """Update user privacy preferences."""
+    return await update_user_preferences(user.id, prefs)
+```
+
+## Consent Management
+
+### Explicit Consent
+
+```typescript
+// Consent must be freely given, specific, informed, and unambiguous
+const ConsentForm = () => {
+  const [consents, setConsents] = useState({
+    termsAccepted: false,
+    privacyAccepted: false,
+    marketingOptIn: false,  // Must be opt-in, not opt-out
+  });
+
+  return (
+    <form>
+      <label>
+        <input
+          type="checkbox"
+          checked={consents.termsAccepted}
+          onChange={(e) => setConsents({ ...consents, termsAccepted: e.target.checked })}
+          required
+        />
+        I accept the <a href="/terms">Terms of Service</a> *
+      </label>
+      
+      <label>
+        <input
+          type="checkbox"
+          checked={consents.privacyAccepted}
+          onChange={(e) => setConsents({ ...consents, privacyAccepted: e.target.checked })}
+          required
+        />
+        I accept the <a href="/privacy">Privacy Policy</a> *
+      </label>
+      
+      <label>
+        <input
+          type="checkbox"
+          checked={consents.marketingOptIn}
+          onChange={(e) => setConsents({ ...consents, marketingOptIn: e.target.checked })}
+        />
+        I would like to receive occasional updates and tips (optional)
+      </label>
+    </form>
+  );
+};
+```
+
+### Cookie Consent
+
+If using analytics or tracking cookies:
+
+```typescript
+// Only load analytics after consent
+const Analytics = () => {
+  const { cookieConsent } = useCookieConsent();
+  
+  useEffect(() => {
+    if (cookieConsent.analytics) {
+      // Load analytics only after consent
+      loadAnalytics();
+    }
+  }, [cookieConsent]);
+  
+  return null;
+};
+```
+
+## Data Retention
+
+### Retention Periods
+
+Document and enforce retention periods:
+
+| Data Type | Retention Period | Justification |
+|-----------|------------------|---------------|
+| Free user readings | 30 days | Limited storage for free tier |
+| Premium readings | 2 years | User-requested history feature |
+| Account data | Until deletion requested | Necessary for service |
+| Security logs | 1 year | Security and fraud prevention |
+| Payment records | 7 years | Legal/tax requirements |
+
+### Automated Cleanup
+
+```python
+# Scheduled job to enforce retention
+async def enforce_data_retention():
+    """Delete data that exceeds retention periods."""
+    
+    # Delete old free-tier readings
+    await db.execute("""
+        DELETE FROM readings 
+        WHERE created_at < NOW() - INTERVAL '30 days'
+        AND user_id IN (SELECT id FROM users WHERE tier = 'free')
+    """)
+    
+    # Delete old security logs
+    await db.execute("""
+        DELETE FROM security_logs
+        WHERE timestamp < NOW() - INTERVAL '1 year'
+    """)
+    
+    logger.info("Data retention cleanup completed")
+```
+
+## Privacy by Design
+
+### Anonymization
+
+```python
+# When storing analytics, anonymize where possible
+async def log_reading_analytics(reading: Reading):
+    await db.insert("analytics", {
+        "spread_type": reading.spread_type,
+        "question_length": len(reading.question),  # Not the question itself
+        "response_time_ms": reading.response_time,
+        "timestamp": datetime.utcnow(),
+        # No user_id - truly anonymous
+    })
+```
+
+### Pseudonymization
+
+```python
+# Use UUIDs instead of sequential IDs
+# Prevents enumeration attacks and reduces linkability
+class Reading(BaseModel):
+    id: UUID = Field(default_factory=uuid4)  # Random, not sequential
+```
+
+## Required Legal Documents
+
+### Privacy Policy
+
+Must include:
+- What data is collected
+- Why it's collected (purposes)
+- How it's processed
+- Who it's shared with
+- User rights and how to exercise them
+- Contact information for data controller
+- Retention periods
+- Security measures
+
+Location: `/docs/legal/privacy-policy.md` and `/frontend/public/privacy.html`
+
+### Terms of Service
+
+Must include:
+- Service description
+- User responsibilities
+- Payment terms
+- Intellectual property
+- Limitation of liability
+- Dispute resolution
+- Termination conditions
+
+Location: `/docs/legal/terms-of-service.md` and `/frontend/public/terms.html`
+
+### Tarot Disclaimer
+
+```markdown
+## Disclaimer
+
+Alembic provides tarot readings for entertainment, self-reflection, and 
+personal insight purposes only. Readings should not be considered as:
+
+- Medical, psychological, or therapeutic advice
+- Financial or investment advice
+- Legal advice
+- A substitute for professional consultation
+
+Tarot readings reflect archetypal patterns and may serve as tools for 
+introspection. They do not predict the future and should not be the 
+sole basis for important life decisions.
+
+If you are experiencing mental health difficulties, please consult a 
+qualified healthcare professional.
+```
+
+## Compliance Checklist
+
+Before launch, verify:
+
+- [ ] Privacy policy published and accessible
+- [ ] Terms of service published and accessible
+- [ ] Consent checkboxes (not pre-checked) at signup
+- [ ] Cookie consent banner (if using tracking)
+- [ ] Data export endpoint functional
+- [ ] Account deletion endpoint functional
+- [ ] Retention periods documented and automated
+- [ ] Security logging in place
+- [ ] No unnecessary data collection
+- [ ] Encryption at rest enabled
+- [ ] HTTPS enforced everywhere
+

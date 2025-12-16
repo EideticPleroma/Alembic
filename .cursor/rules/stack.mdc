@@ -1,0 +1,504 @@
+# Stack Patterns and Best Practices
+
+---
+description: Technology-specific patterns, anti-patterns, and best practices for Alembic's stack
+globs: ["frontend/**/*.ts", "frontend/**/*.tsx", "backend/**/*.py", "**/supabase/**", "**/stripe/**"]
+alwaysApply: false
+---
+
+## Next.js 15 Patterns
+
+### App Router Conventions
+
+```
+app/
+  layout.tsx          # Root layout (wraps all pages)
+  page.tsx            # Home page (/)
+  reading/
+    page.tsx          # Reading page (/reading)
+    [id]/
+      page.tsx        # Reading detail (/reading/123)
+  api/
+    reading/
+      route.ts        # API route (/api/reading)
+```
+
+### Server vs Client Components
+
+```typescript
+// Default: Server Component (no "use client")
+// - Runs on server
+// - Can fetch data directly
+// - Cannot use hooks or browser APIs
+
+// app/reading/page.tsx (Server Component)
+export default async function ReadingPage() {
+  const history = await getReadingHistory(); // Direct DB access
+  return <ReadingList readings={history} />;
+}
+
+// components/ReadingForm.tsx (Client Component)
+"use client";
+
+import { useState } from 'react';
+
+export function ReadingForm() {
+  const [question, setQuestion] = useState('');
+  // ... interactive logic
+}
+```
+
+### Server Actions
+
+```typescript
+// app/actions.ts
+"use server";
+
+export async function createReading(formData: FormData) {
+  const question = formData.get('question') as string;
+  
+  // Validate
+  if (!question) {
+    return { error: 'Question is required' };
+  }
+  
+  // Create reading (server-side)
+  const reading = await readingService.create(question);
+  
+  // Revalidate cache
+  revalidatePath('/history');
+  
+  return { reading };
+}
+
+// components/ReadingForm.tsx
+"use client";
+
+import { createReading } from '@/app/actions';
+
+export function ReadingForm() {
+  return (
+    <form action={createReading}>
+      <input name="question" />
+      <button type="submit">Draw Cards</button>
+    </form>
+  );
+}
+```
+
+### Data Fetching
+
+```typescript
+// Server Component - fetch directly
+async function ReadingPage({ params }: { params: { id: string } }) {
+  const reading = await getReading(params.id);
+  return <ReadingDisplay reading={reading} />;
+}
+
+// With caching
+const reading = await fetch(`/api/reading/${id}`, {
+  next: { revalidate: 60 } // Cache for 60 seconds
+});
+
+// No caching
+const reading = await fetch(`/api/reading/${id}`, {
+  cache: 'no-store'
+});
+```
+
+### Anti-Patterns
+
+```typescript
+// BAD: Using "use client" unnecessarily
+"use client";
+export function StaticCard({ name }: { name: string }) {
+  return <div>{name}</div>; // No interactivity - should be server
+}
+
+// BAD: Fetching on client when server fetch works
+"use client";
+export function ReadingList() {
+  const [readings, setReadings] = useState([]);
+  useEffect(() => {
+    fetch('/api/readings').then(...); // Unnecessary client fetch
+  }, []);
+}
+
+// GOOD: Server component fetches directly
+export default async function ReadingList() {
+  const readings = await db.readings.findMany();
+  return <ul>{readings.map(...)}</ul>;
+}
+```
+
+## FastAPI Patterns
+
+### Dependency Injection
+
+```python
+from fastapi import Depends
+from typing import Annotated
+
+# Define dependencies
+async def get_db() -> AsyncGenerator[Database, None]:
+    db = Database()
+    try:
+        yield db
+    finally:
+        await db.close()
+
+async def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    db: Database = Depends(get_db),
+) -> User:
+    return await verify_token(token, db)
+
+async def get_llm_backend() -> LLMBackend:
+    return GrokBackend(api_key=settings.XAI_API_KEY)
+
+# Use in endpoints
+@router.post("/reading")
+async def create_reading(
+    request: ReadingRequest,
+    user: Annotated[User, Depends(get_current_user)],
+    llm: Annotated[LLMBackend, Depends(get_llm_backend)],
+    db: Annotated[Database, Depends(get_db)],
+):
+    ...
+```
+
+### Pydantic Models
+
+```python
+from pydantic import BaseModel, Field, validator
+from datetime import datetime
+
+class ReadingRequest(BaseModel):
+    question: str = Field(..., min_length=1, max_length=1000)
+    spread_type: SpreadType = SpreadType.THREE_CARD
+    
+    @validator('question')
+    def clean_question(cls, v):
+        return v.strip()
+
+class ReadingResponse(BaseModel):
+    id: str
+    cards: list[CardResponse]
+    interpretation: str
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True  # Enable ORM mode
+```
+
+### Router Organization
+
+```python
+# app/api/routers/reading.py
+from fastapi import APIRouter
+
+router = APIRouter(prefix="/reading", tags=["reading"])
+
+@router.post("/", response_model=ReadingResponse)
+async def create_reading(...): ...
+
+@router.get("/{reading_id}", response_model=ReadingResponse)
+async def get_reading(...): ...
+
+@router.post("/{reading_id}/chat", response_model=ChatResponse)
+async def chat_about_reading(...): ...
+
+# app/main.py
+from app.api.routers import reading, user, webhook
+
+app.include_router(reading.router, prefix="/api")
+app.include_router(user.router, prefix="/api")
+app.include_router(webhook.router, prefix="/api")
+```
+
+### Anti-Patterns
+
+```python
+# BAD: Business logic in endpoint
+@router.post("/reading")
+async def create_reading(request: ReadingRequest):
+    cards = shuffle_deck()[:3]  # Logic in endpoint
+    interpretation = await llm.generate(...)
+    await db.insert(...)
+    return {...}
+
+# GOOD: Thin endpoint, logic in service
+@router.post("/reading")
+async def create_reading(
+    request: ReadingRequest,
+    service: Annotated[ReadingService, Depends(get_reading_service)],
+):
+    return await service.create(request)
+
+# BAD: Sync operations blocking async
+@router.get("/reading/{id}")
+async def get_reading(id: str):
+    reading = db.query(...).first()  # Blocking sync call!
+
+# GOOD: Use async all the way
+@router.get("/reading/{id}")
+async def get_reading(id: str, db: AsyncSession = Depends(get_db)):
+    reading = await db.get(Reading, id)
+```
+
+## Supabase Patterns
+
+### Client Setup
+
+```typescript
+// lib/supabase.ts
+import { createClient } from '@supabase/supabase-js';
+
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+// For server-side with service key
+import { createClient } from '@supabase/supabase-js';
+
+export const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_KEY!
+);
+```
+
+### Row Level Security
+
+```sql
+-- Always enable RLS
+ALTER TABLE readings ENABLE ROW LEVEL SECURITY;
+
+-- Policy: Users see only their readings
+CREATE POLICY "Users view own readings"
+ON readings FOR SELECT
+USING (auth.uid() = user_id);
+
+-- Policy: Users can insert their own readings
+CREATE POLICY "Users create own readings"  
+ON readings FOR INSERT
+WITH CHECK (auth.uid() = user_id);
+```
+
+### Auth Pattern
+
+```typescript
+// Middleware for protected routes
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
+import { NextResponse } from 'next/server';
+
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next();
+  const supabase = createMiddlewareClient({ req, res });
+  
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session && req.nextUrl.pathname.startsWith('/reading')) {
+    return NextResponse.redirect(new URL('/login', req.url));
+  }
+  
+  return res;
+}
+```
+
+## Grok/LiteLLM Patterns
+
+### Basic Integration
+
+```python
+from litellm import acompletion
+
+async def generate_interpretation(
+    cards: list[Card],
+    question: str,
+    spread_type: SpreadType,
+) -> str:
+    prompt = build_interpretation_prompt(cards, question, spread_type)
+    
+    response = await acompletion(
+        model="xai/grok-4.1-fast",
+        messages=[
+            {"role": "system", "content": HERMETIC_SYSTEM_PROMPT},
+            {"role": "user", "content": prompt},
+        ],
+        api_key=settings.XAI_API_KEY,
+        timeout=60,
+    )
+    
+    return response.choices[0].message.content
+```
+
+### Streaming Responses
+
+```python
+from litellm import acompletion
+from fastapi.responses import StreamingResponse
+
+@router.post("/reading/stream")
+async def create_reading_stream(request: ReadingRequest):
+    async def generate():
+        response = await acompletion(
+            model="xai/grok-4.1-fast",
+            messages=[...],
+            stream=True,
+        )
+        
+        async for chunk in response:
+            if chunk.choices[0].delta.content:
+                yield f"data: {chunk.choices[0].delta.content}\n\n"
+        
+        yield "data: [DONE]\n\n"
+    
+    return StreamingResponse(generate(), media_type="text/event-stream")
+```
+
+### Token Management
+
+```python
+import tiktoken
+
+def estimate_tokens(text: str, model: str = "gpt-4") -> int:
+    """Estimate token count for text."""
+    encoding = tiktoken.encoding_for_model(model)
+    return len(encoding.encode(text))
+
+def truncate_to_token_limit(text: str, max_tokens: int) -> str:
+    """Truncate text to fit within token limit."""
+    encoding = tiktoken.encoding_for_model("gpt-4")
+    tokens = encoding.encode(text)
+    
+    if len(tokens) <= max_tokens:
+        return text
+    
+    return encoding.decode(tokens[:max_tokens])
+```
+
+## shadcn/ui Patterns
+
+### Component Installation
+
+```bash
+# Install components as needed
+npx shadcn-ui@latest add button
+npx shadcn-ui@latest add card
+npx shadcn-ui@latest add dialog
+```
+
+### Customization
+
+```typescript
+// components/ui/button.tsx is editable
+// Customize for Alembic's Hermetic theme
+
+import { cva } from "class-variance-authority";
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center rounded-md text-sm font-medium",
+  {
+    variants: {
+      variant: {
+        default: "bg-purple-900 text-gold-100 hover:bg-purple-800",
+        mystical: "bg-gradient-to-r from-purple-900 to-indigo-900 text-gold-100",
+        ghost: "hover:bg-purple-100 hover:text-purple-900",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
+```
+
+### Composition
+
+```typescript
+// Compose shadcn components for domain-specific UI
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+export function TarotCard({ card, position }: TarotCardProps) {
+  return (
+    <Card className={card.reversed ? "rotate-180" : ""}>
+      <CardHeader>
+        <CardTitle>{card.name}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <img src={card.imageUrl} alt={card.name} />
+        <p className="text-sm text-muted-foreground">{position}</p>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+## Stripe Patterns
+
+### Checkout Session
+
+```typescript
+// app/api/checkout/route.ts
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+export async function POST(req: Request) {
+  const { priceId, userId } = await req.json();
+  
+  const session = await stripe.checkout.sessions.create({
+    mode: 'subscription',
+    payment_method_types: ['card'],
+    line_items: [{ price: priceId, quantity: 1 }],
+    success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.NEXT_PUBLIC_URL}/pricing`,
+    client_reference_id: userId,
+    metadata: { userId },
+  });
+  
+  return Response.json({ url: session.url });
+}
+```
+
+### Webhook Handler
+
+```typescript
+// app/api/webhook/stripe/route.ts
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+export async function POST(req: Request) {
+  const body = await req.text();
+  const sig = req.headers.get('stripe-signature')!;
+  
+  let event: Stripe.Event;
+  
+  try {
+    event = stripe.webhooks.constructEvent(
+      body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET!
+    );
+  } catch (err) {
+    return new Response('Webhook Error', { status: 400 });
+  }
+  
+  switch (event.type) {
+    case 'checkout.session.completed':
+      await handleCheckoutComplete(event.data.object);
+      break;
+    case 'customer.subscription.updated':
+      await handleSubscriptionUpdate(event.data.object);
+      break;
+    case 'customer.subscription.deleted':
+      await handleSubscriptionCanceled(event.data.object);
+      break;
+  }
+  
+  return new Response('OK');
+}
+```
+

@@ -1,0 +1,254 @@
+# Date and Time Handling
+
+---
+description: Consistent date formatting in documentation (DD-MM-YYYY for docs, ISO 8601 for code)
+globs: ["docs/**/*", "**/*.md", "**/README*", "**/*ADR*"]
+alwaysApply: false
+---
+
+## Core Principles
+
+1. **Always get the current date** - Never assume or use placeholder dates
+2. **Be explicit about timezones** - UTC for storage, local for display
+3. **Use standard formats** - ISO 8601 for code, human-readable for docs
+
+## Format Standards
+
+### Documentation
+
+**Format: DD-MM-YYYY**
+
+```markdown
+## Date
+16-12-2025
+
+Created: 16-12-2025
+Updated: 17-12-2025
+```
+
+### Code (APIs, Database)
+
+**Format: ISO 8601**
+
+```python
+from datetime import datetime, timezone
+
+# Always use UTC for storage
+created_at = datetime.now(timezone.utc)
+# Result: 2025-12-16T14:30:00+00:00
+
+# ISO format string
+created_at.isoformat()
+# Result: "2025-12-16T14:30:00+00:00"
+```
+
+### Database Storage
+
+```sql
+-- Use TIMESTAMPTZ (timestamp with timezone)
+CREATE TABLE readings (
+    id UUID PRIMARY KEY,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+### API Responses
+
+```python
+from pydantic import BaseModel
+from datetime import datetime
+
+class ReadingResponse(BaseModel):
+    id: str
+    created_at: datetime  # Pydantic serializes to ISO 8601
+    
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
+        }
+```
+
+### Frontend Display
+
+```typescript
+// Use Intl.DateTimeFormat for locale-aware display
+const formatDate = (isoString: string): string => {
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: '2-digit', 
+    year: 'numeric',
+  }).format(new Date(isoString));
+};
+
+// Result: "16/12/2025"
+
+// For relative time
+const formatRelative = (isoString: string): string => {
+  const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+  const diff = Date.now() - new Date(isoString).getTime();
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  
+  if (days === 0) return 'today';
+  if (days === 1) return 'yesterday';
+  return rtf.format(-days, 'day');
+};
+```
+
+## Common Patterns
+
+### Getting Current Date
+
+**Python**:
+```python
+from datetime import datetime, timezone, date
+
+# Current UTC datetime
+now_utc = datetime.now(timezone.utc)
+
+# Current date only
+today = date.today()
+
+# For documentation (DD-MM-YYYY)
+doc_date = today.strftime("%d-%m-%Y")
+```
+
+**TypeScript**:
+```typescript
+// Current ISO string
+const now = new Date().toISOString();
+
+// For documentation (DD-MM-YYYY)
+const docDate = new Date().toLocaleDateString('en-GB');
+```
+
+### Comparing Dates
+
+```python
+from datetime import datetime, timedelta, timezone
+
+# Check if reading is older than 30 days
+reading_date = datetime.fromisoformat(reading.created_at)
+cutoff = datetime.now(timezone.utc) - timedelta(days=30)
+
+if reading_date < cutoff:
+    # Reading is old
+```
+
+### Storing Timestamps
+
+```python
+from datetime import datetime, timezone
+
+class Reading(BaseModel):
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+```
+
+### Parsing User Input
+
+```python
+from datetime import datetime
+
+def parse_date(date_string: str) -> datetime:
+    """Parse various date formats to datetime."""
+    formats = [
+        "%Y-%m-%d",      # ISO: 2025-12-16
+        "%d-%m-%Y",      # European: 16-12-2025
+        "%d/%m/%Y",      # European slash: 16/12/2025
+        "%m/%d/%Y",      # US: 12/16/2025
+    ]
+    
+    for fmt in formats:
+        try:
+            return datetime.strptime(date_string, fmt)
+        except ValueError:
+            continue
+    
+    raise ValueError(f"Unable to parse date: {date_string}")
+```
+
+## Timezone Handling
+
+### Store UTC, Display Local
+
+```python
+# Backend: Always store UTC
+reading.created_at = datetime.now(timezone.utc)
+
+# Frontend: Convert to local
+const localTime = new Date(reading.created_at).toLocaleString();
+```
+
+### Explicit Timezone Conversion
+
+```python
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo  # Python 3.9+
+
+# UTC to specific timezone
+utc_time = datetime.now(timezone.utc)
+london_time = utc_time.astimezone(ZoneInfo("Europe/London"))
+ny_time = utc_time.astimezone(ZoneInfo("America/New_York"))
+```
+
+## ADR Date Format
+
+When creating Architecture Decision Records:
+
+```markdown
+# ADR-001: Title
+
+## Status
+Accepted
+
+## Date
+16-12-2025
+
+## Context
+...
+```
+
+## Common Mistakes
+
+### Avoid
+
+```python
+# BAD: Naive datetime (no timezone)
+datetime.now()  # Don't use this
+
+# BAD: Hardcoded date
+created_at = "2025-01-01"  # Never hardcode
+
+# BAD: Assuming timezone
+datetime.utcnow()  # Deprecated, still naive
+```
+
+### Prefer
+
+```python
+# GOOD: Timezone-aware UTC
+datetime.now(timezone.utc)
+
+# GOOD: Dynamic date
+from datetime import date
+today = date.today().strftime("%d-%m-%Y")
+```
+
+## Testing with Dates
+
+```python
+from datetime import datetime, timezone
+from unittest.mock import patch
+
+def test_reading_creation():
+    fixed_time = datetime(2025, 12, 16, 12, 0, 0, tzinfo=timezone.utc)
+    
+    with patch('app.core.services.reading.datetime') as mock_dt:
+        mock_dt.now.return_value = fixed_time
+        
+        reading = create_reading(...)
+        
+        assert reading.created_at == fixed_time
+```
+
