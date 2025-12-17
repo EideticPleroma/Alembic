@@ -1,0 +1,224 @@
+# Pre-Launch Compliance Checklist
+
+---
+description: Comprehensive checklist for production readiness and compliance
+globs: []
+alwaysApply: false
+---
+
+## Security Checklist
+
+### Authentication & Authorization
+
+- [ ] **Supabase Auth configured** with email confirmation enabled
+- [ ] **Password requirements** set (min 8 chars, complexity)
+- [ ] **Session timeout** configured appropriately
+- [ ] **JWT validation** on all protected endpoints
+- [ ] **Row Level Security** enabled on all tables
+- [ ] **Ownership checks** before data access
+- [ ] **Admin routes** properly protected
+
+### API Security
+
+- [ ] **Rate limiting** configured on all endpoints
+- [ ] **Input validation** via Pydantic/Zod on all inputs
+- [ ] **CORS** configured for specific origins (not `*`)
+- [ ] **Security headers** configured:
+  - [ ] X-Content-Type-Options: nosniff
+  - [ ] X-Frame-Options: DENY
+  - [ ] X-XSS-Protection: 1; mode=block
+  - [ ] Strict-Transport-Security
+  - [ ] Content-Security-Policy
+- [ ] **HTTPS enforced** everywhere
+- [ ] **No sensitive data** in URLs or query params
+
+### Secrets Management
+
+- [ ] **All secrets in environment variables**
+- [ ] **No secrets in code** or version control
+- [ ] **.env files in .gitignore**
+- [ ] **Different keys** for dev/staging/production
+- [ ] **Stripe webhook signature** verification enabled
+
+### Error Handling
+
+- [ ] **Generic error messages** to users (no stack traces)
+- [ ] **Detailed errors** logged server-side only
+- [ ] **No information leakage** in error responses
+
+## Privacy & GDPR Checklist
+
+### Legal Documents
+
+- [ ] **Privacy Policy** published at `/privacy`
+  - [ ] What data is collected
+  - [ ] How it's used
+  - [ ] Who it's shared with
+  - [ ] User rights
+  - [ ] Contact information
+- [ ] **Terms of Service** published at `/terms`
+  - [ ] Service description
+  - [ ] User responsibilities
+  - [ ] Payment terms
+  - [ ] Limitation of liability
+- [ ] **Tarot Disclaimer** visible before readings
+  - [ ] Entertainment purposes
+  - [ ] Not medical/financial advice
+  - [ ] Not a substitute for professional help
+
+### Consent
+
+- [ ] **Explicit consent** at signup (not pre-checked)
+- [ ] **Terms acceptance** required before account creation
+- [ ] **Marketing opt-in** (not opt-out)
+- [ ] **Cookie consent** banner (if using tracking)
+
+### User Rights
+
+- [ ] **Data export** endpoint functional (`/api/user/export`)
+- [ ] **Account deletion** endpoint functional (`/api/user/delete`)
+- [ ] **Profile editing** available
+- [ ] **Preference management** (marketing, analytics opt-out)
+
+### Data Handling
+
+- [ ] **Data minimization** - only collecting what's needed
+- [ ] **Retention periods** documented and automated
+- [ ] **Encryption at rest** enabled (Supabase default)
+- [ ] **No unnecessary logging** of personal data
+- [ ] **Anonymization** where possible
+
+## Payment Compliance (Stripe)
+
+### PCI Compliance
+
+- [ ] **Using Stripe Elements** - never handling raw card data
+- [ ] **Webhook signature** verification
+- [ ] **Idempotent** payment processing
+- [ ] **Subscription lifecycle** properly handled:
+  - [ ] Creation
+  - [ ] Update
+  - [ ] Cancellation
+  - [ ] Failed payment
+
+### Billing
+
+- [ ] **Clear pricing** displayed before purchase
+- [ ] **Subscription terms** clear (billing cycle, cancellation)
+- [ ] **Refund policy** documented
+- [ ] **Invoice/receipt** emails configured
+
+## Technical Checklist
+
+### Infrastructure
+
+- [ ] **Vercel** frontend deployed with custom domain
+- [ ] **Railway** backend deployed with custom domain
+- [ ] **Supabase** project in production mode
+- [ ] **SSL certificates** valid and auto-renewing
+- [ ] **DNS configured** correctly
+- [ ] **Environment variables** set in all platforms
+
+### Monitoring
+
+- [ ] **Error tracking** (Sentry) configured
+- [ ] **Uptime monitoring** configured
+- [ ] **Log aggregation** configured
+- [ ] **Alert thresholds** set for:
+  - [ ] Error rate
+  - [ ] Response time
+  - [ ] Availability
+
+### Performance
+
+- [ ] **Frontend bundle** optimized (< 200KB gzipped)
+- [ ] **Images optimized** and properly sized
+- [ ] **Caching headers** configured
+- [ ] **Database indexes** on frequently queried columns
+- [ ] **LLM response** caching where appropriate
+
+### Backup & Recovery
+
+- [ ] **Database backups** enabled (Supabase automatic)
+- [ ] **Backup restoration** tested
+- [ ] **Disaster recovery** plan documented
+
+## Content Checklist
+
+### Tarot Content
+
+- [ ] **78 cards** with meanings documented
+- [ ] **Card images** sourced legally (public domain or licensed)
+- [ ] **Spread definitions** documented
+- [ ] **Prompt templates** tested and refined
+
+### Marketing
+
+- [ ] **Landing page** complete with:
+  - [ ] Clear value proposition
+  - [ ] Feature highlights
+  - [ ] Pricing information
+  - [ ] Social proof (if available)
+- [ ] **SEO metadata** configured:
+  - [ ] Title tags
+  - [ ] Meta descriptions
+  - [ ] OpenGraph images
+  - [ ] Structured data
+- [ ] **Social sharing** functional
+
+## Testing Checklist
+
+### Functional
+
+- [ ] **User registration** flow works
+- [ ] **User login** flow works
+- [ ] **Reading creation** works
+- [ ] **Payment flow** works (test mode verified)
+- [ ] **Webhook processing** works
+- [ ] **Data export** works
+- [ ] **Account deletion** works
+
+### Cross-Browser
+
+- [ ] **Chrome** (latest)
+- [ ] **Firefox** (latest)
+- [ ] **Safari** (latest)
+- [ ] **Edge** (latest)
+- [ ] **Mobile Safari** (iOS)
+- [ ] **Mobile Chrome** (Android)
+
+### Accessibility
+
+- [ ] **Keyboard navigation** works
+- [ ] **Screen reader** compatible
+- [ ] **Color contrast** sufficient
+- [ ] **Focus indicators** visible
+- [ ] **Alt text** on images
+
+## Launch Day Checklist
+
+### Before Launch
+
+- [ ] **All tests passing**
+- [ ] **No console errors** in production build
+- [ ] **Analytics** configured and verified
+- [ ] **Error tracking** verified (trigger test error)
+- [ ] **Payment processing** verified (test transaction)
+- [ ] **Email delivery** verified
+- [ ] **Mobile experience** verified
+
+### Launch
+
+- [ ] **DNS changes** propagated
+- [ ] **SSL working** on all domains
+- [ ] **Monitoring dashboards** ready
+- [ ] **Support channel** ready (email, Discord, etc.)
+- [ ] **Social media** announcement prepared
+
+### Post-Launch
+
+- [ ] **Monitor error rates** for first 24 hours
+- [ ] **Monitor performance** metrics
+- [ ] **Respond to** user feedback
+- [ ] **Document** any issues and fixes
+

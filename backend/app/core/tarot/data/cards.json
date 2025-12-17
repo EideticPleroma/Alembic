@@ -1,0 +1,791 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "total_cards": 78,
+    "created": "2025-12-16",
+    "description": "Alembic Tarot Deck - Hermetic/Jungian interpretations"
+  },
+  "major_arcana": [
+    {
+      "id": "major_00",
+      "name": "The Fool",
+      "number": 0,
+      "numeral": "0",
+      "image": "00-TheFool.png",
+      "keywords": ["beginnings", "innocence", "spontaneity", "free spirit"],
+      "archetype": "The Divine Child",
+      "hermetic_principle": "Mentalism",
+      "upright": "New beginnings, leap of faith, innocence, spontaneity. The Fool stands at the precipice of adventure, unburdened by past failures. Trust the journey.",
+      "reversed": "Recklessness, naivety, foolishness, risk-taking. The shadow Fool rushes in without wisdom, or hesitates when the leap is required."
+    },
+    {
+      "id": "major_01",
+      "name": "The Magician",
+      "number": 1,
+      "numeral": "I",
+      "image": "01-TheMagician.png",
+      "keywords": ["manifestation", "power", "action", "resourcefulness"],
+      "archetype": "The Self/Ego",
+      "hermetic_principle": "Correspondence",
+      "upright": "Manifestation, will, skill, resourcefulness. The Magician channels divine will into earthly form. All tools are available - will you use them?",
+      "reversed": "Manipulation, trickery, untapped potential, scattered energy. The shadow Magician is all talk, or uses power for deception."
+    },
+    {
+      "id": "major_02",
+      "name": "The High Priestess",
+      "number": 2,
+      "numeral": "II",
+      "image": "02-TheHighPriestess.png",
+      "keywords": ["intuition", "mystery", "unconscious", "inner knowledge"],
+      "archetype": "The Anima",
+      "hermetic_principle": "Polarity",
+      "upright": "Intuition, mystery, the unconscious, sacred knowledge. She guards the threshold between known and unknown. What do you already know but haven't acknowledged?",
+      "reversed": "Secrets, disconnection from intuition, withdrawal. The shadow Priestess hoards mysteries or cannot access inner wisdom."
+    },
+    {
+      "id": "major_03",
+      "name": "The Empress",
+      "number": 3,
+      "numeral": "III",
+      "image": "03-TheEmpress.png",
+      "keywords": ["abundance", "nurturing", "nature", "fertility"],
+      "archetype": "The Great Mother",
+      "hermetic_principle": "Gender",
+      "upright": "Abundance, nurturing, creation, sensuality. The Empress embodies fertile creativity and maternal care. What needs nurturing in your life?",
+      "reversed": "Dependence, creative block, neglect, smothering. The shadow Empress withholds nurture or overwhelms with it."
+    },
+    {
+      "id": "major_04",
+      "name": "The Emperor",
+      "number": 4,
+      "numeral": "IV",
+      "image": "04-TheEmperor.png",
+      "keywords": ["authority", "structure", "control", "father figure"],
+      "archetype": "The Father",
+      "hermetic_principle": "Gender",
+      "upright": "Authority, structure, control, stability. The Emperor builds lasting foundations through discipline. Where do you need more structure?",
+      "reversed": "Tyranny, rigidity, domination, lack of discipline. The shadow Emperor either crushes through control or crumbles without it."
+    },
+    {
+      "id": "major_05",
+      "name": "The Hierophant",
+      "number": 5,
+      "numeral": "V",
+      "image": "05-TheHierophant.png",
+      "keywords": ["tradition", "conformity", "spiritual wisdom", "institutions"],
+      "archetype": "The Wise Old Man",
+      "hermetic_principle": "Correspondence",
+      "upright": "Tradition, conformity, spiritual guidance, education. The Hierophant transmits sacred knowledge through established forms. What tradition serves you?",
+      "reversed": "Rebellion, subversion, new approaches, challenging convention. The shadow Hierophant clings to dead tradition or rejects all guidance."
+    },
+    {
+      "id": "major_06",
+      "name": "The Lovers",
+      "number": 6,
+      "numeral": "VI",
+      "image": "06-TheLovers.png",
+      "keywords": ["union", "choice", "alignment", "relationships"],
+      "archetype": "The Syzygy",
+      "hermetic_principle": "Polarity",
+      "upright": "Union, harmony, relationships, choices, alignment. The Lovers represent sacred union and the choices that shape our path. What values guide your decisions?",
+      "reversed": "Disharmony, imbalance, misalignment, poor choices. The shadow Lovers are divided within or without."
+    },
+    {
+      "id": "major_07",
+      "name": "The Chariot",
+      "number": 7,
+      "numeral": "VII",
+      "image": "07-TheChariot.png",
+      "keywords": ["victory", "willpower", "determination", "control"],
+      "archetype": "The Hero",
+      "hermetic_principle": "Vibration",
+      "upright": "Victory, determination, willpower, control over opposing forces. The Chariot harnesses contradictions into forward motion. What opposing forces can you unite?",
+      "reversed": "Lack of direction, scattered energy, aggression, defeat. The shadow Chariot is pulled apart by unreconciled opposites."
+    },
+    {
+      "id": "major_08",
+      "name": "Strength",
+      "number": 8,
+      "numeral": "VIII",
+      "image": "08-Strength.png",
+      "keywords": ["courage", "patience", "inner strength", "soft power"],
+      "archetype": "Tamed Instinct",
+      "hermetic_principle": "Polarity",
+      "upright": "Inner strength, courage, patience, soft control. Strength tames the lion not through force but through compassion. Where might gentleness be more powerful than force?",
+      "reversed": "Self-doubt, weakness, insecurity, raw emotion. The shadow Strength either suppresses instinct entirely or is overwhelmed by it."
+    },
+    {
+      "id": "major_09",
+      "name": "The Hermit",
+      "number": 9,
+      "numeral": "IX",
+      "image": "09-TheHermit.png",
+      "keywords": ["introspection", "solitude", "guidance", "inner wisdom"],
+      "archetype": "The Seeker",
+      "hermetic_principle": "Mentalism",
+      "upright": "Introspection, solitude, inner guidance, wisdom. The Hermit withdraws to find the light within. What truth can only be found in solitude?",
+      "reversed": "Isolation, loneliness, withdrawal, lost. The shadow Hermit hides from the world or cannot find their inner light."
+    },
+    {
+      "id": "major_10",
+      "name": "Wheel of Fortune",
+      "number": 10,
+      "numeral": "X",
+      "image": "10-WheelOfFortune.png",
+      "keywords": ["change", "cycles", "fate", "turning points"],
+      "archetype": "Fate",
+      "hermetic_principle": "Rhythm",
+      "upright": "Change, cycles, destiny, turning points, luck. The Wheel turns - what rises will fall, what falls will rise. Are you riding the wheel consciously?",
+      "reversed": "Bad luck, resistance to change, breaking cycles. The shadow Wheel finds you fighting inevitable change or trapped in loops."
+    },
+    {
+      "id": "major_11",
+      "name": "Justice",
+      "number": 11,
+      "numeral": "XI",
+      "image": "11-Justice.png",
+      "keywords": ["truth", "fairness", "law", "cause and effect"],
+      "archetype": "Balance",
+      "hermetic_principle": "Cause and Effect",
+      "upright": "Justice, truth, fairness, accountability. Justice weighs actions and consequences with clear sight. What truth needs acknowledgment?",
+      "reversed": "Injustice, dishonesty, imbalance, avoiding accountability. The shadow Justice tips the scales or refuses to see clearly."
+    },
+    {
+      "id": "major_12",
+      "name": "The Hanged Man",
+      "number": 12,
+      "numeral": "XII",
+      "image": "12-TheHangedMan.png",
+      "keywords": ["surrender", "sacrifice", "new perspective", "letting go"],
+      "archetype": "Sacrifice",
+      "hermetic_principle": "Rhythm",
+      "upright": "Surrender, sacrifice, new perspective, waiting. The Hanged Man sees the world differently because he surrendered control. What might you see if you let go?",
+      "reversed": "Stalling, resistance, indecision, needless sacrifice. The shadow Hanged Man refuses to surrender or martyrs themselves pointlessly."
+    },
+    {
+      "id": "major_13",
+      "name": "Death",
+      "number": 13,
+      "numeral": "XIII",
+      "image": "13-Death.png",
+      "keywords": ["endings", "transformation", "change", "transition"],
+      "archetype": "Transformation",
+      "hermetic_principle": "Vibration",
+      "upright": "Endings, transformation, change, release. Death clears what no longer serves so new growth can emerge. What needs to die?",
+      "reversed": "Resistance to change, stagnation, fear of endings. The shadow Death clings to what must pass or rushes endings prematurely."
+    },
+    {
+      "id": "major_14",
+      "name": "Temperance",
+      "number": 14,
+      "numeral": "XIV",
+      "image": "14-Temperance.png",
+      "keywords": ["balance", "moderation", "patience", "alchemy"],
+      "archetype": "Integration",
+      "hermetic_principle": "Polarity",
+      "upright": "Balance, moderation, patience, alchemy, integration. Temperance blends opposites into something greater than either. What extremes need balancing?",
+      "reversed": "Imbalance, excess, lack of long-term vision. The shadow Temperance swings between extremes or mixes incompatible elements."
+    },
+    {
+      "id": "major_15",
+      "name": "The Devil",
+      "number": 15,
+      "numeral": "XV",
+      "image": "15-TheDevil.png",
+      "keywords": ["shadow", "bondage", "materialism", "limitation"],
+      "archetype": "The Shadow",
+      "hermetic_principle": "Polarity",
+      "upright": "Shadow, bondage, addiction, materialism, limiting beliefs. The Devil shows where we've chained ourselves. What do you believe binds you?",
+      "reversed": "Release, breaking free, facing shadow, reclaiming power. The shadow Devil either tightens chains or projects evil outward."
+    },
+    {
+      "id": "major_16",
+      "name": "The Tower",
+      "number": 16,
+      "numeral": "XVI",
+      "image": "16-TheTower.png",
+      "keywords": ["upheaval", "revelation", "sudden change", "liberation"],
+      "archetype": "Destruction",
+      "hermetic_principle": "Vibration",
+      "upright": "Upheaval, revelation, liberation through destruction, truth. The Tower strikes down what was built on false foundations. What needs to fall?",
+      "reversed": "Resisting necessary destruction, fear of change, personal transformation. The shadow Tower prolongs inevitable collapse."
+    },
+    {
+      "id": "major_17",
+      "name": "The Star",
+      "number": 17,
+      "numeral": "XVII",
+      "image": "17-TheStar.png",
+      "keywords": ["hope", "faith", "renewal", "inspiration"],
+      "archetype": "Hope",
+      "hermetic_principle": "Rhythm",
+      "upright": "Hope, faith, renewal, inspiration, serenity. The Star pours healing after the Tower's destruction. What renews your hope?",
+      "reversed": "Despair, disconnection, faithlessness. The shadow Star has lost touch with hope or pours from an empty vessel."
+    },
+    {
+      "id": "major_18",
+      "name": "The Moon",
+      "number": 18,
+      "numeral": "XVIII",
+      "image": "18-TheMoon.png",
+      "keywords": ["illusion", "fear", "anxiety", "the unconscious"],
+      "archetype": "The Unconscious",
+      "hermetic_principle": "Polarity",
+      "upright": "Illusion, fear, unconscious, dreams, intuition. The Moon illuminates the hidden path through shadows. What fears distort your vision?",
+      "reversed": "Release of fear, clarity, truth revealed. The shadow Moon either succumbs to illusion or forces premature clarity."
+    },
+    {
+      "id": "major_19",
+      "name": "The Sun",
+      "number": 19,
+      "numeral": "XIX",
+      "image": "19-TheSun.png",
+      "keywords": ["joy", "success", "vitality", "positivity"],
+      "archetype": "Consciousness",
+      "hermetic_principle": "Mentalism",
+      "upright": "Joy, success, vitality, positivity, consciousness. The Sun radiates life-giving clarity. What brings you genuine joy?",
+      "reversed": "Temporary setbacks, lack of success, inner child wounded. The shadow Sun hides behind clouds or burns without warmth."
+    },
+    {
+      "id": "major_20",
+      "name": "Judgement",
+      "number": 20,
+      "numeral": "XX",
+      "image": "20-Judgement.png",
+      "keywords": ["rebirth", "calling", "absolution", "inner calling"],
+      "archetype": "Rebirth",
+      "hermetic_principle": "Cause and Effect",
+      "upright": "Rebirth, judgement, calling, absolution, awakening. Judgement summons us to rise into our highest self. What is calling you?",
+      "reversed": "Self-doubt, refusal of calling, harsh self-judgment. The shadow Judgement either ignores the call or condemns without mercy."
+    },
+    {
+      "id": "major_21",
+      "name": "The World",
+      "number": 21,
+      "numeral": "XXI",
+      "image": "21-TheWorld.png",
+      "keywords": ["completion", "integration", "accomplishment", "wholeness"],
+      "archetype": "Individuation",
+      "hermetic_principle": "All Seven",
+      "upright": "Completion, integration, accomplishment, wholeness. The World celebrates the dance of integration - the Fool transformed. What cycle is completing?",
+      "reversed": "Incompletion, shortcuts, lack of closure. The shadow World either ends prematurely or cannot release the old cycle."
+    }
+  ],
+  "minor_arcana": {
+    "wands": {
+      "element": "Fire",
+      "domain": "Creativity, passion, will, career",
+      "season": "Spring",
+      "direction": "South",
+      "cards": [
+        {
+          "id": "wands_01",
+          "name": "Ace of Wands",
+          "number": 1,
+          "image": "Wands01.png",
+          "upright": "Inspiration, new beginnings, potential, creative spark",
+          "reversed": "Delays, blocked creativity, lack of direction"
+        },
+        {
+          "id": "wands_02",
+          "name": "Two of Wands",
+          "number": 2,
+          "image": "Wands02.png",
+          "upright": "Planning, future vision, decisions, discovery",
+          "reversed": "Fear of change, lack of planning, playing it safe"
+        },
+        {
+          "id": "wands_03",
+          "name": "Three of Wands",
+          "number": 3,
+          "image": "Wands03.png",
+          "upright": "Expansion, foresight, overseas opportunities, progress",
+          "reversed": "Obstacles, delays, frustration, lack of foresight"
+        },
+        {
+          "id": "wands_04",
+          "name": "Four of Wands",
+          "number": 4,
+          "image": "Wands04.png",
+          "upright": "Celebration, harmony, homecoming, community",
+          "reversed": "Lack of support, transience, home conflicts"
+        },
+        {
+          "id": "wands_05",
+          "name": "Five of Wands",
+          "number": 5,
+          "image": "Wands05.png",
+          "upright": "Competition, conflict, rivalry, diversity",
+          "reversed": "Avoiding conflict, inner conflict, resolution"
+        },
+        {
+          "id": "wands_06",
+          "name": "Six of Wands",
+          "number": 6,
+          "image": "Wands06.png",
+          "upright": "Victory, recognition, success, progress",
+          "reversed": "Egotism, fall from grace, lack of recognition"
+        },
+        {
+          "id": "wands_07",
+          "name": "Seven of Wands",
+          "number": 7,
+          "image": "Wands07.png",
+          "upright": "Challenge, competition, perseverance, defense",
+          "reversed": "Exhaustion, giving up, overwhelmed"
+        },
+        {
+          "id": "wands_08",
+          "name": "Eight of Wands",
+          "number": 8,
+          "image": "Wands08.png",
+          "upright": "Movement, speed, progress, swift action",
+          "reversed": "Delays, frustration, waiting, scattered energy"
+        },
+        {
+          "id": "wands_09",
+          "name": "Nine of Wands",
+          "number": 9,
+          "image": "Wands09.png",
+          "upright": "Resilience, persistence, last stand, courage",
+          "reversed": "Exhaustion, paranoia, defensive, giving up"
+        },
+        {
+          "id": "wands_10",
+          "name": "Ten of Wands",
+          "number": 10,
+          "image": "Wands10.png",
+          "upright": "Burden, responsibility, hard work, achievement",
+          "reversed": "Burnout, delegation, release of burdens"
+        },
+        {
+          "id": "wands_11",
+          "name": "Page of Wands",
+          "number": 11,
+          "image": "Wands11.png",
+          "court": "Page",
+          "upright": "Enthusiasm, exploration, discovery, free spirit",
+          "reversed": "Setbacks, lack of direction, procrastination"
+        },
+        {
+          "id": "wands_12",
+          "name": "Knight of Wands",
+          "number": 12,
+          "image": "Wands12.png",
+          "court": "Knight",
+          "upright": "Energy, passion, adventure, impulsiveness",
+          "reversed": "Haste, scattered energy, delays, frustration"
+        },
+        {
+          "id": "wands_13",
+          "name": "Queen of Wands",
+          "number": 13,
+          "image": "Wands13.png",
+          "court": "Queen",
+          "upright": "Courage, confidence, independence, warmth",
+          "reversed": "Demanding, jealousy, selfishness, insecurity"
+        },
+        {
+          "id": "wands_14",
+          "name": "King of Wands",
+          "number": 14,
+          "image": "Wands14.png",
+          "court": "King",
+          "upright": "Leadership, vision, honor, entrepreneurship",
+          "reversed": "Impulsiveness, haste, ruthlessness, overbearing"
+        }
+      ]
+    },
+    "cups": {
+      "element": "Water",
+      "domain": "Emotions, relationships, intuition",
+      "season": "Summer",
+      "direction": "West",
+      "cards": [
+        {
+          "id": "cups_01",
+          "name": "Ace of Cups",
+          "number": 1,
+          "image": "Cups01.png",
+          "upright": "New love, compassion, creativity, overwhelming emotion",
+          "reversed": "Blocked emotions, emptiness, self-love needed"
+        },
+        {
+          "id": "cups_02",
+          "name": "Two of Cups",
+          "number": 2,
+          "image": "Cups02.png",
+          "upright": "Partnership, unity, connection, love",
+          "reversed": "Disconnection, imbalance, broken communication"
+        },
+        {
+          "id": "cups_03",
+          "name": "Three of Cups",
+          "number": 3,
+          "image": "Cups03.png",
+          "upright": "Celebration, friendship, creativity, community",
+          "reversed": "Overindulgence, gossip, isolation"
+        },
+        {
+          "id": "cups_04",
+          "name": "Four of Cups",
+          "number": 4,
+          "image": "Cups04.png",
+          "upright": "Apathy, contemplation, disconnection, missed opportunity",
+          "reversed": "Sudden awareness, acceptance, moving on"
+        },
+        {
+          "id": "cups_05",
+          "name": "Five of Cups",
+          "number": 5,
+          "image": "Cups05.png",
+          "upright": "Loss, grief, disappointment, regret",
+          "reversed": "Acceptance, moving on, finding peace"
+        },
+        {
+          "id": "cups_06",
+          "name": "Six of Cups",
+          "number": 6,
+          "image": "Cups06.png",
+          "upright": "Nostalgia, childhood, innocence, reunion",
+          "reversed": "Living in the past, naivety, unrealistic"
+        },
+        {
+          "id": "cups_07",
+          "name": "Seven of Cups",
+          "number": 7,
+          "image": "Cups07.png",
+          "upright": "Choices, fantasy, illusion, wishful thinking",
+          "reversed": "Clarity, making choices, alignment with reality"
+        },
+        {
+          "id": "cups_08",
+          "name": "Eight of Cups",
+          "number": 8,
+          "image": "Cups08.png",
+          "upright": "Walking away, disillusionment, leaving behind",
+          "reversed": "Fear of change, stagnation, avoidance"
+        },
+        {
+          "id": "cups_09",
+          "name": "Nine of Cups",
+          "number": 9,
+          "image": "Cups09.png",
+          "upright": "Satisfaction, contentment, gratitude, wish fulfilled",
+          "reversed": "Dissatisfaction, greed, materialism"
+        },
+        {
+          "id": "cups_10",
+          "name": "Ten of Cups",
+          "number": 10,
+          "image": "Cups10.png",
+          "upright": "Harmony, happiness, family, emotional fulfillment",
+          "reversed": "Broken family, disharmony, misaligned values"
+        },
+        {
+          "id": "cups_11",
+          "name": "Page of Cups",
+          "number": 11,
+          "image": "Cups11.png",
+          "court": "Page",
+          "upright": "Creative opportunity, intuition, curiosity",
+          "reversed": "Emotional immaturity, creative blocks, mood swings"
+        },
+        {
+          "id": "cups_12",
+          "name": "Knight of Cups",
+          "number": 12,
+          "image": "Cups12.png",
+          "court": "Knight",
+          "upright": "Romance, charm, imagination, following heart",
+          "reversed": "Moodiness, disappointment, unrealistic"
+        },
+        {
+          "id": "cups_13",
+          "name": "Queen of Cups",
+          "number": 13,
+          "image": "Cups13.png",
+          "court": "Queen",
+          "upright": "Compassion, calm, intuition, emotional security",
+          "reversed": "Martyrdom, insecurity, dependence"
+        },
+        {
+          "id": "cups_14",
+          "name": "King of Cups",
+          "number": 14,
+          "image": "Cups14.png",
+          "court": "King",
+          "upright": "Emotional balance, diplomacy, compassion",
+          "reversed": "Emotional manipulation, moodiness, withdrawal"
+        }
+      ]
+    },
+    "swords": {
+      "element": "Air",
+      "domain": "Thoughts, conflict, truth, decisions",
+      "season": "Autumn",
+      "direction": "East",
+      "cards": [
+        {
+          "id": "swords_01",
+          "name": "Ace of Swords",
+          "number": 1,
+          "image": "Swords01.png",
+          "upright": "Clarity, breakthrough, new idea, truth",
+          "reversed": "Confusion, chaos, lack of clarity"
+        },
+        {
+          "id": "swords_02",
+          "name": "Two of Swords",
+          "number": 2,
+          "image": "Swords02.png",
+          "upright": "Indecision, stalemate, difficult choices",
+          "reversed": "Information overload, clarity, tough decisions"
+        },
+        {
+          "id": "swords_03",
+          "name": "Three of Swords",
+          "number": 3,
+          "image": "Swords03.png",
+          "upright": "Heartbreak, sorrow, grief, emotional pain",
+          "reversed": "Recovery, forgiveness, releasing pain"
+        },
+        {
+          "id": "swords_04",
+          "name": "Four of Swords",
+          "number": 4,
+          "image": "Swords04.png",
+          "upright": "Rest, restoration, contemplation, recuperation",
+          "reversed": "Restlessness, burnout, lack of progress"
+        },
+        {
+          "id": "swords_05",
+          "name": "Five of Swords",
+          "number": 5,
+          "image": "Swords05.png",
+          "upright": "Conflict, defeat, winning at all costs",
+          "reversed": "Reconciliation, making amends, resolution"
+        },
+        {
+          "id": "swords_06",
+          "name": "Six of Swords",
+          "number": 6,
+          "image": "Swords06.png",
+          "upright": "Transition, change, moving on, rite of passage",
+          "reversed": "Resistance to change, unfinished business"
+        },
+        {
+          "id": "swords_07",
+          "name": "Seven of Swords",
+          "number": 7,
+          "image": "Swords07.png",
+          "upright": "Deception, strategy, stealth, getting away with something",
+          "reversed": "Confession, conscience, coming clean"
+        },
+        {
+          "id": "swords_08",
+          "name": "Eight of Swords",
+          "number": 8,
+          "image": "Swords08.png",
+          "upright": "Restriction, limitation, self-imposed imprisonment",
+          "reversed": "Freedom, release, new perspective"
+        },
+        {
+          "id": "swords_09",
+          "name": "Nine of Swords",
+          "number": 9,
+          "image": "Swords09.png",
+          "upright": "Anxiety, worry, fear, nightmares",
+          "reversed": "Hope, reaching out, overcoming fear"
+        },
+        {
+          "id": "swords_10",
+          "name": "Ten of Swords",
+          "number": 10,
+          "image": "Swords10.png",
+          "upright": "Painful ending, deep wounds, betrayal, rock bottom",
+          "reversed": "Recovery, regeneration, resisting inevitable end"
+        },
+        {
+          "id": "swords_11",
+          "name": "Page of Swords",
+          "number": 11,
+          "image": "Swords11.png",
+          "court": "Page",
+          "upright": "Curiosity, new ideas, communication, vigilance",
+          "reversed": "Deception, manipulation, all talk"
+        },
+        {
+          "id": "swords_12",
+          "name": "Knight of Swords",
+          "number": 12,
+          "image": "Swords12.png",
+          "court": "Knight",
+          "upright": "Ambition, action, drive, fast thinking",
+          "reversed": "Recklessness, disregard for others, no direction"
+        },
+        {
+          "id": "swords_13",
+          "name": "Queen of Swords",
+          "number": 13,
+          "image": "Swords13.png",
+          "court": "Queen",
+          "upright": "Clear thinking, independence, direct communication",
+          "reversed": "Coldness, cruelty, bitterness"
+        },
+        {
+          "id": "swords_14",
+          "name": "King of Swords",
+          "number": 14,
+          "image": "Swords14.png",
+          "court": "King",
+          "upright": "Intellectual power, authority, truth, ethics",
+          "reversed": "Manipulation, tyranny, abuse of power"
+        }
+      ]
+    },
+    "pentacles": {
+      "element": "Earth",
+      "domain": "Material world, work, body, finances",
+      "season": "Winter",
+      "direction": "North",
+      "cards": [
+        {
+          "id": "pentacles_01",
+          "name": "Ace of Pentacles",
+          "number": 1,
+          "image": "Pentacles01.png",
+          "upright": "New opportunity, prosperity, abundance",
+          "reversed": "Missed opportunity, scarcity mindset"
+        },
+        {
+          "id": "pentacles_02",
+          "name": "Two of Pentacles",
+          "number": 2,
+          "image": "Pentacles02.png",
+          "upright": "Balance, adaptability, juggling priorities",
+          "reversed": "Overwhelm, imbalance, disorganization"
+        },
+        {
+          "id": "pentacles_03",
+          "name": "Three of Pentacles",
+          "number": 3,
+          "image": "Pentacles03.png",
+          "upright": "Teamwork, collaboration, learning, implementation",
+          "reversed": "Disharmony, misalignment, working alone"
+        },
+        {
+          "id": "pentacles_04",
+          "name": "Four of Pentacles",
+          "number": 4,
+          "image": "Pentacles04.png",
+          "upright": "Security, control, conservation, stability",
+          "reversed": "Greed, materialism, self-protection"
+        },
+        {
+          "id": "pentacles_05",
+          "name": "Five of Pentacles",
+          "number": 5,
+          "image": "Pentacles05.png",
+          "upright": "Financial loss, poverty, isolation, hardship",
+          "reversed": "Recovery, improvement, spiritual poverty"
+        },
+        {
+          "id": "pentacles_06",
+          "name": "Six of Pentacles",
+          "number": 6,
+          "image": "Pentacles06.png",
+          "upright": "Generosity, charity, giving, receiving",
+          "reversed": "Strings attached, debt, one-sided charity"
+        },
+        {
+          "id": "pentacles_07",
+          "name": "Seven of Pentacles",
+          "number": 7,
+          "image": "Pentacles07.png",
+          "upright": "Long-term vision, patience, investment, reward",
+          "reversed": "Impatience, bad investment, lack of reward"
+        },
+        {
+          "id": "pentacles_08",
+          "name": "Eight of Pentacles",
+          "number": 8,
+          "image": "Pentacles08.png",
+          "upright": "Apprenticeship, skill development, diligence",
+          "reversed": "Perfectionism, lack of focus, no motivation"
+        },
+        {
+          "id": "pentacles_09",
+          "name": "Nine of Pentacles",
+          "number": 9,
+          "image": "Pentacles09.png",
+          "upright": "Abundance, luxury, self-sufficiency, independence",
+          "reversed": "Financial dependence, hustling, superficiality"
+        },
+        {
+          "id": "pentacles_10",
+          "name": "Ten of Pentacles",
+          "number": 10,
+          "image": "Pentacles10.png",
+          "upright": "Wealth, inheritance, family, establishment",
+          "reversed": "Financial failure, family disputes, instability"
+        },
+        {
+          "id": "pentacles_11",
+          "name": "Page of Pentacles",
+          "number": 11,
+          "image": "Pentacles11.png",
+          "court": "Page",
+          "upright": "Ambition, diligence, new financial opportunity",
+          "reversed": "Laziness, missed opportunity, procrastination"
+        },
+        {
+          "id": "pentacles_12",
+          "name": "Knight of Pentacles",
+          "number": 12,
+          "image": "Pentacles12.png",
+          "court": "Knight",
+          "upright": "Efficiency, routine, responsibility, hard work",
+          "reversed": "Boredom, laziness, stagnation, perfectionism"
+        },
+        {
+          "id": "pentacles_13",
+          "name": "Queen of Pentacles",
+          "number": 13,
+          "image": "Pentacles13.png",
+          "court": "Queen",
+          "upright": "Nurturing, practical, providing, down-to-earth",
+          "reversed": "Financial independence, self-care, smothering"
+        },
+        {
+          "id": "pentacles_14",
+          "name": "King of Pentacles",
+          "number": 14,
+          "image": "Pentacles14.png",
+          "court": "King",
+          "upright": "Abundance, security, leadership, discipline",
+          "reversed": "Greed, materialism, corruption"
+        }
+      ]
+    }
+  },
+  "number_meanings": {
+    "1": "Pure potential, seed, beginning",
+    "2": "Duality, balance, partnership, choice",
+    "3": "Creation, growth, collaboration, expression",
+    "4": "Structure, stability, foundation, rest",
+    "5": "Conflict, challenge, instability, change",
+    "6": "Harmony, communication, resolution",
+    "7": "Reflection, assessment, inner work",
+    "8": "Movement, power, mastery, regeneration",
+    "9": "Near completion, integration, intensity",
+    "10": "Completion, culmination, new cycle begins"
+  },
+  "court_meanings": {
+    "Page": "Student - Learning, messages, new energy",
+    "Knight": "Quester - Action, pursuit, excess of element",
+    "Queen": "Master (inward) - Mature expression, nurturing, receptive",
+    "King": "Master (outward) - Authority, mastery, directing, active"
+  }
+}
+

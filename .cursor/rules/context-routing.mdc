@@ -1,0 +1,176 @@
+---
+alwaysApply: true
+---
+## Purpose
+
+This rule helps you (the AI assistant) navigate the Alembic project effectively by:
+1. Finding relevant documentation before implementing
+2. Loading appropriate rules for the current task
+3. Knowing when to escalate to the user
+4. Preventing drift from established patterns
+
+## Before Starting Any Task
+
+### 1. Identify Task Type
+
+| Task Type | Primary Rules | Secondary Rules |
+|-----------|---------------|-----------------|
+| **New feature** | architecture-context, solid-principles | testing, stack |
+| **Bug fix** | stack, error-handling | security |
+| **API endpoint** | security, solid-principles | documentation |
+| **Database change** | privacy-gdpr, security | documentation |
+| **UI component** | stack, functional-patterns | - |
+| **Tarot content** | hermetic-voice | - |
+| **Deployment** | stack, compliance-checklist | security |
+| **Git operations** | git-workflow | documentation |
+| **Documentation** | documentation | - |
+
+### 2. Search for Existing Context
+
+Before implementing, search these locations:
+
+```
+docs/decisions/     - Has this been decided before? Check ADRs
+docs/architecture/  - How does this fit the system design?
+docs/guides/        - Is there a guide for this?
+```
+
+**Search patterns**:
+- "How do we handle [X]?" -> Search docs/guides/
+- "Why did we choose [Y]?" -> Search docs/decisions/
+- "Where is [Z] implemented?" -> Search codebase
+- "What's the pattern for [W]?" -> Search docs/architecture/
+
+### 3. Load Relevant Rules
+
+Request additional rules when needed:
+
+```
+# For Git operations
+Request: git-workflow.mdc
+
+# For writing docs
+Request: documentation.mdc
+
+# For date handling
+Request: datetime-handling.mdc
+
+# For error handling
+Request: error-handling.mdc
+
+# For testing
+Request: testing.mdc
+
+# For stack-specific patterns
+Request: stack.mdc
+
+# For pre-launch checks
+Request: compliance-checklist.mdc
+
+# For logging/monitoring
+Request: logging-observability.mdc
+
+# For tarot/Hermetic content
+Request: hermetic-voice.mdc
+```
+
+## Escalation Triggers
+
+**Pause and ask the user when:**
+
+### Ambiguous Requirements
+- "You mentioned [X], but I'm not sure if you mean [A] or [B]. Which is it?"
+- "This could be implemented as [approach 1] or [approach 2]. They have different tradeoffs..."
+
+### Multiple Valid Implementations
+- "There are several ways to do this: [list]. Which aligns best with your goals?"
+- "The standard pattern here would be [X], but [Y] might be better because..."
+
+### Potential Breaking Changes
+- "This change would affect [existing component]. Should I proceed?"
+- "This modifies the API contract. Existing clients would need to update."
+
+### Deviation from Patterns
+- "This would deviate from the pattern in [ADR/doc]. Is that intentional?"
+- "The established way to do this is [X], but you're asking for [Y]. Let's discuss."
+
+### Security/Privacy Implications
+- "This would expose [data type]. Are you sure?"
+- "This endpoint should probably require authentication. Shall I add it?"
+
+### Scope Creep
+- "This feature is getting complex. Should we break it into phases?"
+- "While implementing [X], I noticed we'd also need [Y] and [Z]. Should I include those?"
+
+## Context Discovery Patterns
+
+### Finding Similar Code
+
+```
+# Find similar implementations
+grep -r "def create_reading" backend/app/
+grep -r "async function" frontend/src/
+
+# Find usage patterns
+grep -r "LLMBackend" backend/app/
+grep -r "useReading" frontend/src/
+```
+
+### Understanding Data Flow
+
+1. Start at the API endpoint (`backend/app/api/routers/`)
+2. Follow to the service layer (`backend/app/core/services/`)
+3. Check the models (`backend/app/models/`)
+4. Verify the schemas (`backend/app/schemas/`)
+
+### Finding Configuration
+
+```
+backend/app/config.py    - Backend configuration
+frontend/src/lib/        - Frontend configuration
+.env.example             - Required environment variables
+```
+
+## Rule Application Matrix
+
+### Always Active Rules
+
+These rules apply to EVERY task:
+- `teaching-persona.mdc` - Maintain the Hermes-Thoth voice
+- `metaprompt.mdc` - Strategic dialogue and deviation protocols
+- `architecture-context.mdc` - System understanding
+- `solid-principles.mdc` - Code quality standards
+- `functional-patterns.mdc` - Programming style
+- `security.mdc` - Security requirements
+- `privacy-gdpr.mdc` - Privacy requirements
+- `context-routing.mdc` - This file
+
+### On-Demand Rules
+
+Request these based on task:
+
+| Trigger | Rule to Request |
+|---------|-----------------|
+| "commit", "push", "branch", "merge" | git-workflow.mdc |
+| "document", "README", "ADR" | documentation.mdc |
+| "date", "time", "timestamp" | datetime-handling.mdc |
+| "error", "exception", "failure" | error-handling.mdc |
+| "test", "pytest", "jest" | testing.mdc |
+| "Next.js", "FastAPI", "Supabase", "Grok" | stack.mdc |
+| "deploy", "launch", "production" | compliance-checklist.mdc |
+| "log", "monitor", "trace" | logging-observability.mdc |
+| "tarot", "reading", "interpretation" | hermetic-voice.mdc |
+
+## Anti-Drift Checklist
+
+Before completing any significant task, verify:
+
+- [ ] **Pattern consistency**: Does this match existing patterns in the codebase?
+- [ ] **Documentation alignment**: Does this match what's documented?
+- [ ] **ADR compliance**: Does this follow relevant architecture decisions?
+- [ ] **Test coverage**: Are tests added/updated?
+- [ ] **Security check**: Are there security implications?
+- [ ] **Privacy check**: Are there privacy implications?
+
+If any check fails, discuss with the user before proceeding.
+

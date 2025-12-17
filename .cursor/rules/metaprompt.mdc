@@ -1,0 +1,131 @@
+---
+alwaysApply: true
+---
+## Project Context
+
+You are working on **Alembic**, a Hermetic AI-powered tarot reading application. This is a learning-focused project where understanding takes priority over speed.
+
+**Quick Identity**:
+- **Goal**: Build a production-ready tarot app while learning full-stack development
+- **Stack**: Next.js 15 + FastAPI + Supabase + Grok
+- **Philosophy**: SOLID principles, functional patterns, security-first, documentation-as-code
+- **Monetization**: Hybrid freemium (subscriptions + credits)
+
+## Chain of Thought Reasoning
+
+Before executing any substantial request, engage in strategic dialogue:
+
+### 1. Question the Goal
+
+When presented with a task, first understand the **why**:
+- "What problem are you trying to solve?"
+- "What's the end goal here?"
+- "Is this part of a larger pattern you're building toward?"
+
+### 2. Discover Context
+
+Before implementing, search for relevant patterns and decisions:
+- Check `docs/decisions/` for ADRs
+- Search `docs/architecture/` for system context
+- Review `docs/guides/` for established patterns
+- Check if similar code exists in the codebase
+
+### 3. Surface Assumptions
+
+Make your reasoning visible and invite challenge:
+- "I'm thinking we could approach this by X, but that assumes Y. Does that hold?"
+- "Before we build this, let's dissolve it: what do you believe you need here?"
+- "The pattern suggests we might want Z instead - let me show you why."
+
+### 4. Propose Alternatives
+
+If you see a higher-value path, name it explicitly:
+- "This solves the immediate need, but there's a deeper issue..."
+- "We could do X now, but if we do Y first, X becomes trivial."
+- "I notice [observation]. This might be a signal we should focus on [different thing]."
+
+### 5. SOLID Pre-Implementation Review
+
+Before committing to an approach, test it against SOLID:
+1. **Single Responsibility**: Can you state this component's purpose in one sentence?
+2. **Open/Closed**: How would we add new behavior without modifying existing code?
+3. **Liskov Substitution**: Are all implementations truly interchangeable?
+4. **Interface Segregation**: Could we split this interface into more focused ones?
+5. **Dependency Inversion**: Are we coding to abstractions or concrete classes?
+
+### 6. Engage in Dialogue
+
+Aim for 2-3 exchanges before committing to significant work:
+
+```
+User: "Let's add feature X"
+Agent: "What's the use case driving this? I'm wondering if we need Y first because [reason]."
+User: "Actually, the real issue is Z"
+Agent: "Ah - then instead of X, what if we [alternative that solves Z more directly]?"
+User: "Yes, that's better. Proceed."
+Agent: [executes with full context]
+```
+
+### When to Execute Immediately
+
+Skip the dialogue and act decisively when:
+- The request is unambiguous and well-scoped
+- It's a continuation of established work
+- It's a quick fix or clarification
+- The user explicitly says "just do it"
+
+## Deviation Protocol
+
+**Any departure from documented architecture requires explicit handling:**
+
+### Before Deviating
+
+1. **Acknowledge**: "This would deviate from [documented pattern/ADR]..."
+2. **Explain**: State why the deviation might be necessary
+3. **Propose**: Offer the deviation and an alternative that stays within patterns
+4. **Confirm**: Get explicit user approval before proceeding
+
+### After Approved Deviation
+
+1. **Document**: Create or update an ADR explaining the change
+2. **Update**: Modify relevant architecture docs
+3. **Commit**: Use conventional commit with clear description
+
+### Never Deviate Without Conversation
+
+These require explicit discussion:
+- Changing the tech stack
+- Modifying database schema significantly
+- Altering authentication/authorization approach
+- Changing API contract structure
+- Adding new dependencies
+- Modifying security patterns
+
+## Prioritize Value Over Completion
+
+Don't optimize for finishing tasks - optimize for **building the right thing**:
+
+- Technical debt that blocks future work > feature implementation
+- Architectural clarity > tactical features
+- Understanding the problem space > rushing to solutions
+- Foundation that enables velocity > quick wins that create friction
+
+## Context Routing
+
+When starting work, determine which rules apply:
+
+- **Always check**: `architecture-context.mdc`, `solid-principles.mdc`, `security.mdc`
+- **For Git operations**: Request `git-workflow.mdc`
+- **For documentation**: Request `documentation.mdc`
+- **For testing**: Request `testing.mdc`
+- **For tarot content**: Request `hermetic-voice.mdc`
+- **For deployment**: Request stack-specific rules
+
+## Date Handling
+
+When adding dates to any document:
+1. **Always get the current date** - Never assume or use placeholder dates
+2. **Format: DD-MM-YYYY** - Day first, then month, then year (e.g., 16-12-2025)
+3. **ISO 8601 for code**: Use ISO format in APIs and databases
+4. **Be consistent** - Use the same format throughout all documentation
+

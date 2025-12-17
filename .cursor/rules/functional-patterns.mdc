@@ -1,0 +1,278 @@
+# Functional Programming Patterns
+
+---
+description: Functional programming principles and patterns for cleaner, more testable code
+alwaysApply: true
+---
+
+## Core Principles
+
+Functional programming patterns lead to code that is:
+- **Predictable**: Same inputs always produce same outputs
+- **Testable**: No hidden state or side effects to mock
+- **Composable**: Small functions combine into complex behavior
+- **Debuggable**: Data flows are explicit and traceable
+
+## Prefer Pure Functions
+
+**Pure functions**:
+- Return the same output for the same input
+- Have no side effects (no mutations, no I/O)
+- Don't depend on external state
+
+**Good Example**:
+```python
+# Pure - same input always gives same output
+def calculate_reading_cost(tier: UserTier, spread_type: SpreadType) -> int:
+    base_costs = {SpreadType.SINGLE: 1, SpreadType.THREE_CARD: 2, SpreadType.CELTIC: 5}
+    multipliers = {UserTier.FREE: 1, UserTier.SEEKER: 0, UserTier.INITIATE: 0}
+    return base_costs[spread_type] * multipliers[tier]
+
+# Pure - transforms data without mutation
+def format_card_for_display(card: Card, position: str) -> CardDisplay:
+    return CardDisplay(
+        name=card.name,
+        position=position,
+        image_url=f"/cards/{card.id}.png",
+        reversed=card.is_reversed,
+    )
+```
+
+**Bad Example**:
+```python
+# Impure - depends on and modifies external state
+user_credits = 100  # Global state
+
+def deduct_credits(amount: int) -> bool:
+    global user_credits  # Side effect!
+    if user_credits >= amount:
+        user_credits -= amount  # Mutation!
+        return True
+    return False
+```
+
+## Immutability
+
+**Never mutate data structures.** Create new ones instead.
+
+**Good Example**:
+```python
+# Create new dict instead of mutating
+def add_card_to_spread(spread: dict, card: Card, position: str) -> dict:
+    return {
+        **spread,
+        "cards": [*spread["cards"], {"card": card, "position": position}]
+    }
+
+# Using dataclasses with frozen=True
+from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class Reading:
+    id: str
+    cards: tuple[Card, ...]  # Immutable tuple, not list
+    interpretation: str
+```
+
+**Bad Example**:
+```python
+# Mutation - dangerous, hard to track
+def add_card_to_spread(spread: dict, card: Card, position: str) -> dict:
+    spread["cards"].append({"card": card, "position": position})  # Mutates!
+    return spread
+```
+
+**In TypeScript/React**:
+```typescript
+// Good - spread operator creates new object
+const addCardToSpread = (spread: Spread, card: Card): Spread => ({
+  ...spread,
+  cards: [...spread.cards, card],
+});
+
+// Bad - mutation
+const addCardToSpread = (spread: Spread, card: Card): Spread => {
+  spread.cards.push(card);  // Mutates!
+  return spread;
+};
+```
+
+## Composition Over Inheritance
+
+Build complex behavior from small, composable functions.
+
+**Good Example**:
+```python
+from functools import reduce
+from typing import Callable
+
+# Small, focused functions
+def shuffle_deck(deck: list[Card]) -> list[Card]: ...
+def draw_n_cards(n: int) -> Callable[[list[Card]], list[Card]]: ...
+def assign_positions(positions: list[str]) -> Callable[[list[Card]], Spread]: ...
+
+# Compose them together
+def create_three_card_reading(deck: list[Card]) -> Spread:
+    return pipe(
+        deck,
+        shuffle_deck,
+        draw_n_cards(3),
+        assign_positions(["Past", "Present", "Future"]),
+    )
+
+# Simple pipe implementation
+def pipe(value, *funcs):
+    return reduce(lambda v, f: f(v), funcs, value)
+```
+
+## Map, Filter, Reduce Over Loops
+
+Use declarative transformations when they improve clarity.
+
+**Good Example**:
+```python
+# Declarative - what we want
+major_arcana = [card for card in deck if card.is_major]
+card_names = [card.name for card in spread.cards]
+total_value = sum(card.numerology_value for card in spread.cards)
+
+# Or using map/filter for complex transforms
+formatted_cards = list(map(format_for_display, spread.cards))
+reversed_cards = list(filter(lambda c: c.is_reversed, spread.cards))
+```
+
+**When loops are clearer**:
+```python
+# Sometimes a loop IS clearer, especially with complex logic
+result = []
+for card in spread.cards:
+    if card.is_reversed:
+        interpretation = get_shadow_meaning(card)
+    else:
+        interpretation = get_light_meaning(card)
+    
+    if card.position == "Significator":
+        interpretation = emphasize(interpretation)
+    
+    result.append(interpretation)
+```
+
+## Result Types for Error Handling
+
+Use Result types instead of exceptions for expected failures.
+
+**Good Example**:
+```python
+from dataclasses import dataclass
+from typing import Generic, TypeVar, Union
+
+T = TypeVar("T")
+E = TypeVar("E")
+
+@dataclass
+class Ok(Generic[T]):
+    value: T
+
+@dataclass
+class Err(Generic[E]):
+    error: E
+
+Result = Union[Ok[T], Err[E]]
+
+# Function returns Result, not raises
+def validate_reading_request(request: ReadingRequest) -> Result[ReadingRequest, str]:
+    if not request.question:
+        return Err("Question is required")
+    if len(request.question) > 1000:
+        return Err("Question too long")
+    return Ok(request)
+
+# Caller handles both cases explicitly
+match validate_reading_request(request):
+    case Ok(validated):
+        return await create_reading(validated)
+    case Err(error):
+        raise HTTPException(400, error)
+```
+
+**When to use exceptions**:
+- Truly exceptional cases (database down, network failure)
+- Programming errors (should never happen in correct code)
+- Framework requirements (FastAPI HTTPException)
+
+## Avoid Side Effects in Business Logic
+
+Push side effects to the edges of your system.
+
+**Good Architecture**:
+```python
+# Core logic is pure - no I/O, no side effects
+def interpret_spread(cards: list[Card], question: str) -> InterpretationRequest:
+    """Pure function - builds the data needed for interpretation."""
+    return InterpretationRequest(
+        cards=[format_card(c) for c in cards],
+        question=question,
+        prompt_template="three_card",
+    )
+
+# Side effects at the boundary
+async def create_reading(request: ReadingRequest, llm: LLMBackend, db: Database):
+    """Impure function - handles I/O at system boundary."""
+    cards = draw_cards(deck, 3)  # Pure
+    interpretation_request = interpret_spread(cards, request.question)  # Pure
+    
+    # Side effects pushed to the edge
+    interpretation = await llm.generate(interpretation_request)  # I/O
+    reading_id = await db.save_reading(reading)  # I/O
+    
+    return ReadingResponse(id=reading_id, interpretation=interpretation)
+```
+
+## Dependency Injection Enables Functional Style
+
+```python
+# Functions receive dependencies, don't reach out for them
+async def process_reading(
+    request: ReadingRequest,
+    draw_cards: Callable[[int], list[Card]],  # Injected
+    interpret: Callable[[list[Card], str], Awaitable[str]],  # Injected
+    persist: Callable[[Reading], Awaitable[str]],  # Injected
+) -> ReadingResponse:
+    cards = draw_cards(3)
+    interpretation = await interpret(cards, request.question)
+    reading_id = await persist(Reading(cards=cards, interpretation=interpretation))
+    return ReadingResponse(id=reading_id)
+```
+
+## TypeScript Functional Patterns
+
+```typescript
+// Prefer const and arrow functions
+const formatCard = (card: Card): FormattedCard => ({
+  name: card.name,
+  imageUrl: `/cards/${card.id}.png`,
+  reversed: card.isReversed,
+});
+
+// Use map/filter/reduce
+const majorArcana = deck.filter(card => card.isMajor);
+const cardNames = spread.cards.map(card => card.name);
+
+// Avoid mutation in React state
+const [cards, setCards] = useState<Card[]>([]);
+// Good
+setCards(prev => [...prev, newCard]);
+// Bad
+cards.push(newCard); setCards(cards);
+```
+
+## When Imperative is Better
+
+Functional isn't always better. Use imperative when:
+- Performance is critical (avoid allocations)
+- The algorithm is inherently stateful
+- Readability suffers from forced functional style
+- Framework conventions expect mutation (React refs, some libraries)
+
+The goal is clarity and correctness, not dogma.
+

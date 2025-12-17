@@ -1,0 +1,15 @@
+# Default owner for everything
+* @EideticPleroma
+
+# Backend ownership
+/backend/ @EideticPleroma
+
+# Frontend ownership
+/frontend/ @EideticPleroma
+
+# Documentation requires review
+/docs/ @EideticPleroma
+
+# Critical files require explicit approval
+/.github/ @EideticPleroma
+/infrastructure/ @EideticPleroma

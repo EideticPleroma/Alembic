@@ -1,0 +1,151 @@
+---
+alwaysApply: true
+---
+## Project Identity
+
+**Alembic** is an AI-powered Hermetic tarot reading application. The name reflects the alchemical vessel of transformation - where questions are transmuted into insight.
+
+### Core Philosophy
+
+- **Hermetic Foundation**: "As above, so below" - Principle of Correspondence guides UX and interpretation
+- **Depth Psychology**: Jungian archetypes, shadow work, individuation - not fortune telling
+- **Learning-First**: This project prioritizes understanding over speed
+- **Production-Ready**: Despite being a learning project, it must be deployable and monetizable
+
+### Tech Stack
+
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| **Frontend** | Next.js 15 | SSR, App Router, Server Components |
+| **UI Components** | shadcn/ui + Tailwind | Accessible, customizable components |
+| **Backend API** | FastAPI | Async Python API with auto-docs |
+| **Database** | Supabase (PostgreSQL) | Auth, storage, RLS |
+| **LLM (Production)** | xAI Grok 4.1 Fast | Cost-effective, distinctive voice |
+| **LLM (Development)** | Ollama | Free local inference |
+| **Payments** | Stripe | Subscriptions and one-time purchases |
+| **Frontend Hosting** | Vercel | Zero-config Next.js deployment |
+| **Backend Hosting** | Railway | Docker-based Python hosting |
+
+### Architecture Pattern
+
+```
+User (Browser)
+    |
+    v
+Next.js Frontend (Vercel)
+    |
+    v
+FastAPI Backend (Railway)
+    |
+    +---> Supabase (Auth, Database, Storage)
+    |
+    +---> Grok API (LLM Interpretations)
+    |
+    +---> Stripe (Payments)
+```
+
+## ADR Summaries
+
+### ADR-001: Stack Selection (16-12-2025)
+
+**Decision**: Next.js 15 + FastAPI + Supabase + Grok
+
+**Rationale**:
+- Next.js: Best AI tooling (v0, Cursor), job-market relevance, Vercel integration
+- FastAPI: Python ecosystem for future ML, excellent async support, auto-docs
+- Supabase: All-in-one (auth + DB + storage), generous free tier, PostgreSQL
+- Grok: 10-15x cheaper than Claude/GPT-4, distinctive personality
+
+### ADR-002: LLM Provider Choice (16-12-2025)
+
+**Decision**: Grok 4.1 Fast for production, Ollama for development
+
+**Rationale**:
+- Cost: $0.20/1M input, $0.50/1M output (vs $3/$15 for Claude Sonnet)
+- Context: 2M tokens (vs 200K for Claude)
+- Voice: Edgy, direct personality suits tarot domain
+- Development: Ollama provides free local testing
+
+### ADR-003: Monetization Model (16-12-2025)
+
+**Decision**: Hybrid freemium (subscriptions + credits)
+
+**Tiers**:
+- Free: 3 readings/day, three-card only
+- Seeker ($7/mo): Unlimited readings, all spreads, 30-day history
+- Initiate ($15/mo): Full history, export, priority support
+- Credits ($5/20): Pay-per-use alternative
+
+## Component Responsibilities
+
+### Frontend (`/frontend`)
+
+| Component | Responsibility |
+|-----------|---------------|
+| `app/page.tsx` | Landing page, marketing |
+| `app/reading/` | Reading interface, card display |
+| `app/history/` | Past readings list and detail |
+| `components/tarot/` | Card, Spread, Animation components |
+| `lib/api.ts` | Backend API client |
+| `lib/supabase.ts` | Supabase client configuration |
+| `lib/stripe.ts` | Stripe client configuration |
+
+### Backend (`/backend`)
+
+| Component | Responsibility |
+|-----------|---------------|
+| `app/main.py` | FastAPI app initialization |
+| `app/api/routers/` | API endpoint handlers |
+| `app/core/tarot/` | Deck, cards, spreads logic |
+| `app/core/llm/` | Grok integration, prompts |
+| `app/core/services/` | Business logic (reading, subscription) |
+| `app/models/` | Database models |
+| `app/schemas/` | Pydantic request/response schemas |
+
+### Documentation (`/docs`)
+
+| Directory | Content |
+|-----------|---------|
+| `architecture/` | System design, data models, API spec |
+| `decisions/` | Architecture Decision Records |
+| `guides/` | How-to guides for development |
+| `prompts/` | LLM prompt templates |
+| `tarot/` | Card meanings, spread definitions |
+| `legal/` | Privacy policy, terms, disclaimers |
+
+## Data Flow: Reading Session
+
+1. User selects spread type and enters question
+2. Frontend sends POST to `/api/reading`
+3. Backend validates user tier/credits
+4. Backend draws cards (cryptographic random)
+5. Backend builds Hermetic prompt with cards + question
+6. Grok generates interpretation
+7. Backend stores reading in Supabase
+8. Response returned with cards + interpretation
+9. Frontend animates card reveal
+10. User can continue conversation via `/api/reading/{id}/chat`
+
+## Security Boundaries
+
+- **Authentication**: Supabase Auth (JWT)
+- **Authorization**: Row Level Security on all tables
+- **API**: Rate limiting, input validation, CORS
+- **Payments**: Stripe handles all card data (PCI compliance)
+- **Secrets**: Environment variables only, never in code
+
+## When Making Changes
+
+**Before implementing features**:
+1. Check if relevant ADR exists in `docs/decisions/`
+2. Search for similar patterns in existing code
+3. Verify alignment with SOLID principles
+4. Consider security implications
+5. Ask: "Does this align with the learning goal?"
+
+**When changing architecture**:
+1. Discuss deviation with user first
+2. Create/update ADR in `docs/decisions/`
+3. Update this file if components change
+4. Update `docs/architecture/system-overview.md`
+
