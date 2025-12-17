@@ -125,6 +125,53 @@ async def test_llm(prompt: str = "What is the meaning of life?") -> dict[str, An
         ) from e
 
 
+@router.get("/supabase")
+async def test_supabase() -> dict[str, Any]:
+    """Test Supabase connection.
+
+    Returns:
+        dict: Connection status for auth and database
+    """
+    try:
+        from supabase import create_client
+
+        from app.config import get_settings
+
+        settings = get_settings()
+        client = create_client(settings.supabase_url, settings.supabase_key)
+
+        results: dict[str, Any] = {"status": "success", "checks": {}}
+
+        # Test auth connection
+        try:
+            client.auth.get_session()
+            results["checks"]["auth"] = "connected"
+        except Exception as e:
+            results["checks"]["auth"] = f"error: {str(e)[:50]}"
+
+        # Test database connection
+        try:
+            response = client.table("readings").select("id").limit(1).execute()
+            results["checks"]["database"] = "connected"
+            results["checks"]["readings_table"] = f"{len(response.data)} rows"
+        except Exception as e:
+            error_str = str(e)
+            if "does not exist" in error_str:
+                results["checks"]["database"] = "connected (table not created)"
+            else:
+                results["checks"]["database"] = f"error: {error_str[:50]}"
+
+        logger.info("supabase_test_success", checks=results["checks"])
+        return results
+
+    except Exception as e:
+        logger.error("supabase_test_error", error=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Supabase error: {str(e)}",
+        ) from e
+
+
 @router.post("/reading")
 async def test_reading(
     question: str = "What do I need to know right now?",

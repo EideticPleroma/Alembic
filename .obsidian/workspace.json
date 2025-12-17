@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "obsidian/02-project/tasks.md",
+                "file": "obsidian/01-daily/template.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "tasks"
+              "title": "template"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "obsidian/02-project/tasks.md",
+                "file": "obsidian/01-daily/template.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for tasks"
+              "title": "Backlinks for template"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "obsidian/02-project/tasks.md",
+                "file": "obsidian/01-daily/template.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from tasks"
+              "title": "Outgoing links from template"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "obsidian/02-project/tasks.md",
+                "file": "obsidian/01-daily/template.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of tasks"
+              "title": "Outline of template"
             }
           },
           {
@@ -221,7 +221,10 @@
   },
   "active": "4f207a66f28c2699",
   "lastOpenFiles": [
+    "backend/app/core/tarot/__pycache__/spreads.cpython-310.pyc",
+    "obsidian/02-project/kanban.md",
     "obsidian/02-project/milestones.md",
+    "obsidian/02-project/tasks.md",
     "backend/app/core/tarot/__pycache__/__init__.cpython-310.pyc",
     "backend/app/core/tarot/__pycache__/deck.cpython-310.pyc",
     "backend/app/core/tarot/__pycache__",
@@ -231,7 +234,6 @@
     "backend/app/__pycache__/__init__.cpython-310.pyc",
     "backend/app/__pycache__/main.cpython-310.pyc",
     "backend/app/__pycache__",
-    "backend/app/core/tarot/__pycache__/spreads.cpython-310.pyc",
     "frontend/node_modules/run-parallel/README.md",
     "frontend/node_modules/merge2/README.md",
     "frontend/node_modules/is-number/README.md",
@@ -241,7 +243,6 @@
     "frontend/node_modules/cssesc/README.md",
     "frontend/node_modules/tslib/SECURITY.md",
     "frontend/node_modules/tslib/README.md",
-    "obsidian/02-project/kanban.md",
     "frontend/public/cards/Wands14.png",
     "frontend/public/cards/Wands13.png",
     "frontend/public/cards/Wands12.png",
@@ -264,8 +265,6 @@
     "frontend/node_modules/tough-cookie/README.md",
     "frontend/node_modules/xmlchars/README.md",
     "frontend/node_modules/y18n/CHANGELOG.md",
-    "frontend/node_modules/graphql/README.md",
-    "frontend/node_modules/whatwg-mimetype/README.md",
-    "frontend/node_modules/headers-polyfill/README.md"
+    "frontend/node_modules/graphql/README.md"
   ]
 }
