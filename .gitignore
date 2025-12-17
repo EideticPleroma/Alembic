@@ -71,10 +71,10 @@ coverage/
 logs/
 
 # =============================================================================
-# Obsidian
+# Obsidian (local only)
 # =============================================================================
-obsidian/.obsidian/workspace.json
-obsidian/.obsidian/workspace-mobile.json
+.obsidian/
+obsidian/
 
 # =============================================================================
 # Misc
