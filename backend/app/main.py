@@ -12,7 +12,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
 
-from app.api.routers import health
+from app.api.routers import health, test
 from app.config import Settings, get_settings
 
 logger = structlog.get_logger(__name__)
@@ -76,6 +76,7 @@ def create_app() -> FastAPI:
 
     # Include routers
     app.include_router(health.router)
+    app.include_router(test.router)
 
     return app
 
