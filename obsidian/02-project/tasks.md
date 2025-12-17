@@ -22,11 +22,11 @@ LIMIT 20
 ## By Phase
 
 ### Phase 0: Foundation
-- [ ] Initialize Next.js 15 project #phase0
-- [ ] Initialize FastAPI project #phase0
-- [ ] Set up local Ollama #phase0
-- [ ] Configure environment variables #phase0
-- [ ] Set up Git repository #phase0
+- [x] Initialize Next.js 15 project #phase0 ✅ 2025-12-17
+- [x] Initialize FastAPI project #phase0 ✅ 2025-12-17
+- [x] Set up local Ollama #phase0 ✅ 2025-12-17
+- [x] Configure environment variables #phase0 ✅ 2025-12-17
+- [x] Set up Git repository #phase0 ✅ 2025-12-17
 
 ### Phase 1: Core Reading
 - [ ] Create 78-card deck data #phase1 #priority-high

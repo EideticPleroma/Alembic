@@ -46,7 +46,9 @@ async def test_deck() -> dict[str, Any]:
             ],
         }
     except Exception as e:
-        logger.error("deck_error", error=str(e))
+        import traceback
+
+        logger.error("deck_error", error=str(e), traceback=traceback.format_exc())
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Deck error: {str(e)}",

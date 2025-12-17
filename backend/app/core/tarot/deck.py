@@ -47,10 +47,26 @@ class TarotDeck:
             list: All 78 cards with their metadata.
         """
         cards: list[dict[str, Any]] = []
+
+        # Add major arcana
         major = self.deck_data.get("major_arcana", [])
-        minor = self.deck_data.get("minor_arcana", [])
         cards.extend(major)
-        cards.extend(minor)
+
+        # Add minor arcana - handle nested structure by suit
+        minor_arcana = self.deck_data.get("minor_arcana", {})
+        if isinstance(minor_arcana, dict):
+            for suit_name, suit_data in minor_arcana.items():
+                if isinstance(suit_data, dict) and "cards" in suit_data:
+                    # Add suit metadata to each card
+                    for card in suit_data["cards"]:
+                        card["suit"] = suit_name
+                        card["element"] = suit_data.get("element", "")
+                        card["domain"] = suit_data.get("domain", "")
+                        cards.append(card)
+        elif isinstance(minor_arcana, list):
+            # Flat list format (fallback)
+            cards.extend(minor_arcana)
+
         return cards
 
     def draw(self, count: int = 1) -> list[dict[str, Any]]:
@@ -131,5 +147,12 @@ class TarotDeck:
         Returns:
             list: All 56 minor arcana cards
         """
-        result: list[dict[str, Any]] = self.deck_data.get("minor_arcana", [])
-        return result
+        cards: list[dict[str, Any]] = []
+        minor_arcana = self.deck_data.get("minor_arcana", {})
+        if isinstance(minor_arcana, dict):
+            for suit_name, suit_data in minor_arcana.items():
+                if isinstance(suit_data, dict) and "cards" in suit_data:
+                    for card in suit_data["cards"]:
+                        card["suit"] = suit_name
+                        cards.append(card)
+        return cards

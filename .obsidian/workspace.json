@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "obsidian/02-project/milestones.md",
+                "file": "obsidian/02-project/tasks.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "milestones"
+              "title": "tasks"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "obsidian/02-project/milestones.md",
+                "file": "obsidian/02-project/tasks.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for milestones"
+              "title": "Backlinks for tasks"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "obsidian/02-project/milestones.md",
+                "file": "obsidian/02-project/tasks.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from milestones"
+              "title": "Outgoing links from tasks"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "obsidian/02-project/milestones.md",
+                "file": "obsidian/02-project/tasks.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of milestones"
+              "title": "Outline of tasks"
             }
           },
           {
@@ -221,17 +221,17 @@
   },
   "active": "4f207a66f28c2699",
   "lastOpenFiles": [
+    "obsidian/02-project/milestones.md",
     "backend/app/core/tarot/__pycache__/__init__.cpython-310.pyc",
     "backend/app/core/tarot/__pycache__/deck.cpython-310.pyc",
-    "backend/app/core/tarot/__pycache__/spreads.cpython-310.pyc",
     "backend/app/core/tarot/__pycache__",
-    "backend/app/core/llm/__pycache__/prompts.cpython-310.pyc",
-    "backend/app/core/llm/__pycache__/__init__.cpython-310.pyc",
-    "backend/app/core/llm/__pycache__/client.cpython-310.pyc",
-    "backend/app/core/llm/__pycache__",
     "backend/app/core/__pycache__/__init__.cpython-310.pyc",
     "backend/app/core/__pycache__",
-    "backend/app/api/routers/__pycache__/test.cpython-310.pyc",
+    "backend/app/__pycache__/config.cpython-310.pyc",
+    "backend/app/__pycache__/__init__.cpython-310.pyc",
+    "backend/app/__pycache__/main.cpython-310.pyc",
+    "backend/app/__pycache__",
+    "backend/app/core/tarot/__pycache__/spreads.cpython-310.pyc",
     "frontend/node_modules/run-parallel/README.md",
     "frontend/node_modules/merge2/README.md",
     "frontend/node_modules/is-number/README.md",
