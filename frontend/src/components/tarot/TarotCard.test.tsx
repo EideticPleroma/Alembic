@@ -73,8 +73,13 @@ describe('TarotCard', () => {
       const { container } = render(
         <TarotCard card={mockCard} onClick={handleClick} />
       );
-      const root = container.firstChild as HTMLElement;
-      root.click();
+      // Find the card image container (div with onClick handler)
+      const divs = container.querySelectorAll('div');
+      // The second div should be the card container with onClick
+      const cardDiv = divs[1] as HTMLElement;
+      if (cardDiv) {
+        cardDiv.click();
+      }
       expect(handleClick).toHaveBeenCalled();
     });
 
