@@ -1,3 +1,5 @@
+import { Reading, Spread, SpreadType } from './types';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
 export class APIClient {
@@ -49,6 +51,17 @@ export class APIClient {
 
   async delete<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE' });
+  }
+
+  async createReading(question: string, spreadType: SpreadType): Promise<Reading> {
+    return this.post<Reading>('/api/reading', {
+      question,
+      spread_type: spreadType,
+    });
+  }
+
+  async getSpreads(): Promise<Spread[]> {
+    return this.get<Spread[]>('/api/spreads');
   }
 }
 

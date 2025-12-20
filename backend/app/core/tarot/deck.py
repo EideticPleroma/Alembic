@@ -4,8 +4,8 @@ This module provides the Tarot Deck class for managing the 78-card deck,
 drawing random cards, and managing spread positions.
 """
 
+import copy
 import json
-import random
 import secrets
 from pathlib import Path
 from typing import Any
@@ -109,14 +109,17 @@ class TarotDeck:
             count: Number of cards to draw
 
         Returns:
-            list: Cards with 'reversed' boolean flag added
+            list: Cards with 'is_reversed' boolean flag added
         """
         cards = self.draw(count)
+        result = []
 
         for card in cards:
-            card["is_reversed"] = random.choice([True, False])
+            card_copy = copy.deepcopy(card)
+            card_copy["is_reversed"] = secrets.choice([True, False])
+            result.append(card_copy)
 
-        return cards
+        return result
 
     def get_card_by_id(self, card_id: str) -> dict[str, Any] | None:
         """Retrieve a specific card by ID.
