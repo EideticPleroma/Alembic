@@ -23,6 +23,21 @@ Alembic is a Hermetic AI-powered tarot reading application that serves as a digi
 | Payments | Stripe |
 | Hosting | Vercel (frontend), Railway (backend) |
 
+## Project Status
+
+### Phase 1: Core Reading - COMPLETE ✅
+
+- [x] **Backend**: Card deck (78 cards), drawing logic, three-card spread, Hermetic system prompt, Grok integration
+- [x] **API**: POST /api/reading and GET /api/spreads endpoints with Pydantic validation
+- [x] **Frontend**: TarotCard component, SpreadLayout component, reading page with form submission
+- [x] **Tests**: 80 comprehensive tests (43 backend, 37 frontend) - all passing
+
+**Recent commits**:
+- `a5d1d44` - test: add comprehensive Phase 1 test coverage
+- `953c961` - feat: implement Phase 1 Core Reading endpoints and components
+
+**Next**: Phase 2 (Users) - Supabase auth, user profiles, reading history
+
 ## Quick Start
 
 ### Prerequisites
