@@ -117,7 +117,7 @@ Please provide a meaningful interpretation that honors each card's meaning and p
                 name=card.get("name", "Unknown"),
                 position=position.name,
                 is_reversed=card.get("is_reversed", False),
-                image_url=f"/cards/{card.get('id', 'unknown')}.png",
+                image_url=f"/cards/{card.get('image', 'unknown')}",
             )
             cards_response.append(card_response)
 
