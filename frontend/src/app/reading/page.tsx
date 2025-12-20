@@ -11,141 +11,213 @@ import { Reading, Spread, SpreadType, CardInReading } from '@/lib/types';
 /**
  * Renders structured interpretation content with proper formatting.
  * Parses markdown-like structure from LLM response.
+ * Handles both ## headers and ### headers, with fallbacks for unstructured content.
  */
 function InterpretationContent({ content }: { content: string }) {
-  // Split by main sections (## headers)
-  const sections = content.split(/^## /gm).filter(Boolean);
-
-  const renderSection = (rawSection: string) => {
-    const lines = rawSection.split('\n');
-    const headerTitle = lines[0].trim();
-    const bodyLines = lines.slice(1).join('\n').trim();
-
-    if (!bodyLines) {
-      return null;
-    }
-
-    // Handle Reflection Questions section (bullet points or numbered lists)
-    if (headerTitle.toLowerCase().includes('reflection question')) {
-      // Try to parse as bullet points (- item) or numbered list (1. item)
-      let bullets: string[] = [];
-      
-      // Check for bullet points
-      if (bodyLines.includes('\n- ') || bodyLines.startsWith('- ')) {
-        const bulletParts = bodyLines.split(/\n- /).filter(Boolean);
-        const introText = bulletParts[0]?.includes('?') ? '' : bulletParts[0];
-        bullets = introText 
-          ? bulletParts.slice(1).map((b) => b.replace(/^- /, '').trim())
-          : bulletParts.map((b) => b.replace(/^- /, '').trim());
-      }
-      // Check for numbered list (1. 2. 3. etc)
-      else if (/\d+\.\s/.test(bodyLines)) {
-        bullets = bodyLines
-          .split(/\n?\d+\.\s+/)
-          .filter(Boolean)
-          .map((b) => b.trim());
-      }
-      // Fallback: split by newlines if no pattern found
-      else {
-        bullets = bodyLines
-          .split('\n')
-          .filter((line) => line.trim().length > 0)
-          .map((b) => b.trim());
-      }
-
-      return (
-        <div key={headerTitle} className="mb-6">
-          <h4 className="font-serif text-lg text-gold mb-3 border-b border-gold/20 pb-1">
-            {headerTitle}
-          </h4>
-          <ul className="space-y-2">
-            {bullets.map((bullet, idx) => (
-              <li
-                key={idx}
-                className="text-cream/80 text-sm pl-4 relative before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-gold/60 before:rounded-full"
-              >
-                {bullet}
-              </li>
-            ))}
-          </ul>
-        </div>
-      );
-    }
-
-    // Handle The Cards Speak section (subsections with ### headers)
-    if (headerTitle.toLowerCase().includes('cards speak')) {
-      const cardSections = bodyLines.split(/^### /).filter(Boolean);
-
-      return (
-        <div key={headerTitle} className="mb-6">
-          <h4 className="font-serif text-lg text-gold mb-4 border-b border-gold/20 pb-1">
-            {headerTitle}
-          </h4>
-          <div className="space-y-4">
-            {cardSections.map((cardSection, idx) => {
-              const cardLines = cardSection.split('\n');
-              const cardTitle = cardLines[0].trim();
-              const cardBody = cardLines.slice(1).join('\n').trim();
-
-              return (
-                <div key={idx} className="bg-midnight/30 rounded-lg p-4 border border-gold/10">
-                  <h5 className="font-semibold text-gold/90 text-sm mb-2">
-                    {cardTitle}
-                  </h5>
-                  <p className="text-cream/80 leading-relaxed text-sm">
-                    {cardBody}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      );
-    }
-
-    // Handle The Weaving section
-    if (headerTitle.toLowerCase().includes('weaving')) {
-      return (
-        <div key={headerTitle} className="mb-6">
-          <h4 className="font-serif text-lg text-gold mb-3 border-b border-gold/20 pb-1">
-            {headerTitle}
-          </h4>
-          <div className="bg-gold/5 rounded-lg p-4 border-l-2 border-gold/50">
-            <p className="text-cream/80 leading-relaxed text-sm italic">
-              {bodyLines}
-            </p>
-          </div>
-        </div>
-      );
-    }
-
-    // Default section rendering
+  // Helper to render card sections (### headers)
+  const renderCardSections = (text: string) => {
+    const cardSections = text.split(/### /).filter(Boolean);
+    
     return (
-      <div key={headerTitle} className="mb-6">
-        <h4 className="font-serif text-lg text-gold mb-3 border-b border-gold/20 pb-1">
-          {headerTitle}
-        </h4>
-        <p className="text-cream/80 leading-relaxed text-sm">{bodyLines}</p>
+      <div className="space-y-4">
+        {cardSections.map((cardSection, idx) => {
+          const cardLines = cardSection.split('\n');
+          const cardTitle = cardLines[0].trim();
+          const cardBody = cardLines.slice(1).join('\n').trim();
+
+          if (!cardBody) return null;
+
+          return (
+            <div key={idx} className="bg-midnight/30 rounded-lg p-4 border border-gold/10">
+              <h5 className="font-semibold text-gold/90 text-sm mb-2">
+                {cardTitle}
+              </h5>
+              <p className="text-cream/80 leading-relaxed text-sm">
+                {cardBody}
+              </p>
+            </div>
+          );
+        })}
       </div>
     );
   };
 
-  // If no structured content detected, render as plain text with paragraphs
-  if (!content.includes('## ')) {
+  // Helper to render reflection questions
+  const renderReflectionQuestions = (text: string) => {
+    let bullets: string[] = [];
+    
+    // Check for bullet points
+    if (text.includes('\n- ') || text.startsWith('- ')) {
+      bullets = text
+        .split(/\n- /)
+        .filter(Boolean)
+        .map((b) => b.replace(/^- /, '').trim());
+    }
+    // Check for numbered list (1. 2. 3. etc)
+    else if (/\d+\.\s/.test(text)) {
+      bullets = text
+        .split(/\n?\d+\.\s+/)
+        .filter(Boolean)
+        .map((b) => b.trim());
+    }
+    // Fallback: split by question marks or newlines
+    else {
+      bullets = text
+        .split(/\?\s*/)
+        .filter((line) => line.trim().length > 0)
+        .map((b) => b.trim() + '?');
+    }
+
     return (
-      <div className="space-y-4">
-        {content.split('\n\n').map((paragraph, index) => (
-          <p key={index} className="text-cream/80 leading-relaxed text-sm">
-            {paragraph}
-          </p>
+      <ul className="space-y-2">
+        {bullets.map((bullet, idx) => (
+          <li
+            key={idx}
+            className="text-cream/80 text-sm pl-4 relative before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-gold/60 before:rounded-full"
+          >
+            {bullet}
+          </li>
         ))}
+      </ul>
+    );
+  };
+
+  // Check if content has ## headers
+  const hasMainHeaders = content.includes('## ');
+  // Check if content has ### headers (card sections)
+  const hasCardHeaders = content.includes('### ');
+
+  // If we have ## headers, split by them
+  if (hasMainHeaders) {
+    const sections = content.split(/^## /gm).filter(Boolean);
+
+    return (
+      <div className="space-y-6">
+        {sections.map((rawSection, index) => {
+          const lines = rawSection.split('\n');
+          const headerTitle = lines[0].trim();
+          const bodyLines = lines.slice(1).join('\n').trim();
+
+          if (!bodyLines) return null;
+
+          // Handle Reflection Questions
+          if (headerTitle.toLowerCase().includes('reflection question')) {
+            return (
+              <div key={index} className="mb-6">
+                <h4 className="font-serif text-lg text-gold mb-3 border-b border-gold/20 pb-1">
+                  {headerTitle}
+                </h4>
+                {renderReflectionQuestions(bodyLines)}
+              </div>
+            );
+          }
+
+          // Handle Cards Speak section
+          if (headerTitle.toLowerCase().includes('cards speak') || bodyLines.includes('### ')) {
+            return (
+              <div key={index} className="mb-6">
+                <h4 className="font-serif text-lg text-gold mb-4 border-b border-gold/20 pb-1">
+                  {headerTitle}
+                </h4>
+                {renderCardSections(bodyLines)}
+              </div>
+            );
+          }
+
+          // Handle The Weaving section
+          if (headerTitle.toLowerCase().includes('weaving')) {
+            return (
+              <div key={index} className="mb-6">
+                <h4 className="font-serif text-lg text-gold mb-3 border-b border-gold/20 pb-1">
+                  {headerTitle}
+                </h4>
+                <div className="bg-gold/5 rounded-lg p-4 border-l-2 border-gold/50">
+                  <p className="text-cream/80 leading-relaxed text-sm italic">
+                    {bodyLines}
+                  </p>
+                </div>
+              </div>
+            );
+          }
+
+          // Default section
+          return (
+            <div key={index} className="mb-6">
+              <h4 className="font-serif text-lg text-gold mb-3 border-b border-gold/20 pb-1">
+                {headerTitle}
+              </h4>
+              <p className="text-cream/80 leading-relaxed text-sm">{bodyLines}</p>
+            </div>
+          );
+        }).filter(Boolean)}
       </div>
     );
   }
 
+  // If no ## headers but has ### headers, parse by those
+  if (hasCardHeaders) {
+    // Try to extract sections by known keywords
+    const parts: { title: string; content: string }[] = [];
+    
+    // Extract card sections (everything before "The Weaving" or "Reflection")
+    const weavingMatch = content.match(/The Weaving\s*([\s\S]*?)(?=Reflection Questions|$)/i);
+    const reflectionMatch = content.match(/Reflection Questions?\s*([\s\S]*?)$/i);
+    
+    // Get card content (everything with ### headers before weaving/reflection)
+    let cardContent = content;
+    if (weavingMatch) {
+      cardContent = content.substring(0, content.indexOf(weavingMatch[0]));
+    } else if (reflectionMatch) {
+      cardContent = content.substring(0, content.indexOf(reflectionMatch[0]));
+    }
+
+    return (
+      <div className="space-y-6">
+        {/* Card Sections */}
+        {cardContent.includes('### ') && (
+          <div className="mb-6">
+            <h4 className="font-serif text-lg text-gold mb-4 border-b border-gold/20 pb-1">
+              The Cards Speak
+            </h4>
+            {renderCardSections(cardContent)}
+          </div>
+        )}
+
+        {/* The Weaving */}
+        {weavingMatch && (
+          <div className="mb-6">
+            <h4 className="font-serif text-lg text-gold mb-3 border-b border-gold/20 pb-1">
+              The Weaving
+            </h4>
+            <div className="bg-gold/5 rounded-lg p-4 border-l-2 border-gold/50">
+              <p className="text-cream/80 leading-relaxed text-sm italic">
+                {weavingMatch[1].trim()}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Reflection Questions */}
+        {reflectionMatch && (
+          <div className="mb-6">
+            <h4 className="font-serif text-lg text-gold mb-3 border-b border-gold/20 pb-1">
+              Reflection Questions
+            </h4>
+            {renderReflectionQuestions(reflectionMatch[1].trim())}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Fallback: render as plain text with paragraphs
   return (
-    <div className="space-y-2">
-      {sections.map(renderSection).filter(Boolean)}
+    <div className="space-y-4">
+      {content.split('\n\n').map((paragraph, index) => (
+        <p key={index} className="text-cream/80 leading-relaxed text-sm">
+          {paragraph}
+        </p>
+      ))}
     </div>
   );
 }
