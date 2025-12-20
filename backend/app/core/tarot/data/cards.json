@@ -12,7 +12,12 @@
       "number": 0,
       "numeral": "0",
       "image": "00-TheFool.png",
-      "keywords": ["beginnings", "innocence", "spontaneity", "free spirit"],
+      "keywords": [
+        "beginnings",
+        "innocence",
+        "spontaneity",
+        "free spirit"
+      ],
       "archetype": "The Divine Child",
       "hermetic_principle": "Mentalism",
       "upright": "New beginnings, leap of faith, innocence, spontaneity. The Fool stands at the precipice of adventure, unburdened by past failures. Trust the journey.",
@@ -24,7 +29,12 @@
       "number": 1,
       "numeral": "I",
       "image": "01-TheMagician.png",
-      "keywords": ["manifestation", "power", "action", "resourcefulness"],
+      "keywords": [
+        "manifestation",
+        "power",
+        "action",
+        "resourcefulness"
+      ],
       "archetype": "The Self/Ego",
       "hermetic_principle": "Correspondence",
       "upright": "Manifestation, will, skill, resourcefulness. The Magician channels divine will into earthly form. All tools are available - will you use them?",
@@ -36,7 +46,12 @@
       "number": 2,
       "numeral": "II",
       "image": "02-TheHighPriestess.png",
-      "keywords": ["intuition", "mystery", "unconscious", "inner knowledge"],
+      "keywords": [
+        "intuition",
+        "mystery",
+        "unconscious",
+        "inner knowledge"
+      ],
       "archetype": "The Anima",
       "hermetic_principle": "Polarity",
       "upright": "Intuition, mystery, the unconscious, sacred knowledge. She guards the threshold between known and unknown. What do you already know but haven't acknowledged?",
@@ -48,7 +63,12 @@
       "number": 3,
       "numeral": "III",
       "image": "03-TheEmpress.png",
-      "keywords": ["abundance", "nurturing", "nature", "fertility"],
+      "keywords": [
+        "abundance",
+        "nurturing",
+        "nature",
+        "fertility"
+      ],
       "archetype": "The Great Mother",
       "hermetic_principle": "Gender",
       "upright": "Abundance, nurturing, creation, sensuality. The Empress embodies fertile creativity and maternal care. What needs nurturing in your life?",
@@ -60,7 +80,12 @@
       "number": 4,
       "numeral": "IV",
       "image": "04-TheEmperor.png",
-      "keywords": ["authority", "structure", "control", "father figure"],
+      "keywords": [
+        "authority",
+        "structure",
+        "control",
+        "father figure"
+      ],
       "archetype": "The Father",
       "hermetic_principle": "Gender",
       "upright": "Authority, structure, control, stability. The Emperor builds lasting foundations through discipline. Where do you need more structure?",
@@ -72,7 +97,12 @@
       "number": 5,
       "numeral": "V",
       "image": "05-TheHierophant.png",
-      "keywords": ["tradition", "conformity", "spiritual wisdom", "institutions"],
+      "keywords": [
+        "tradition",
+        "conformity",
+        "spiritual wisdom",
+        "institutions"
+      ],
       "archetype": "The Wise Old Man",
       "hermetic_principle": "Correspondence",
       "upright": "Tradition, conformity, spiritual guidance, education. The Hierophant transmits sacred knowledge through established forms. What tradition serves you?",
@@ -84,7 +114,12 @@
       "number": 6,
       "numeral": "VI",
       "image": "06-TheLovers.png",
-      "keywords": ["union", "choice", "alignment", "relationships"],
+      "keywords": [
+        "union",
+        "choice",
+        "alignment",
+        "relationships"
+      ],
       "archetype": "The Syzygy",
       "hermetic_principle": "Polarity",
       "upright": "Union, harmony, relationships, choices, alignment. The Lovers represent sacred union and the choices that shape our path. What values guide your decisions?",
@@ -96,7 +131,12 @@
       "number": 7,
       "numeral": "VII",
       "image": "07-TheChariot.png",
-      "keywords": ["victory", "willpower", "determination", "control"],
+      "keywords": [
+        "victory",
+        "willpower",
+        "determination",
+        "control"
+      ],
       "archetype": "The Hero",
       "hermetic_principle": "Vibration",
       "upright": "Victory, determination, willpower, control over opposing forces. The Chariot harnesses contradictions into forward motion. What opposing forces can you unite?",
@@ -108,7 +148,12 @@
       "number": 8,
       "numeral": "VIII",
       "image": "08-Strength.png",
-      "keywords": ["courage", "patience", "inner strength", "soft power"],
+      "keywords": [
+        "courage",
+        "patience",
+        "inner strength",
+        "soft power"
+      ],
       "archetype": "Tamed Instinct",
       "hermetic_principle": "Polarity",
       "upright": "Inner strength, courage, patience, soft control. Strength tames the lion not through force but through compassion. Where might gentleness be more powerful than force?",
@@ -120,7 +165,12 @@
       "number": 9,
       "numeral": "IX",
       "image": "09-TheHermit.png",
-      "keywords": ["introspection", "solitude", "guidance", "inner wisdom"],
+      "keywords": [
+        "introspection",
+        "solitude",
+        "guidance",
+        "inner wisdom"
+      ],
       "archetype": "The Seeker",
       "hermetic_principle": "Mentalism",
       "upright": "Introspection, solitude, inner guidance, wisdom. The Hermit withdraws to find the light within. What truth can only be found in solitude?",
@@ -132,7 +182,12 @@
       "number": 10,
       "numeral": "X",
       "image": "10-WheelOfFortune.png",
-      "keywords": ["change", "cycles", "fate", "turning points"],
+      "keywords": [
+        "change",
+        "cycles",
+        "fate",
+        "turning points"
+      ],
       "archetype": "Fate",
       "hermetic_principle": "Rhythm",
       "upright": "Change, cycles, destiny, turning points, luck. The Wheel turns - what rises will fall, what falls will rise. Are you riding the wheel consciously?",
@@ -144,7 +199,12 @@
       "number": 11,
       "numeral": "XI",
       "image": "11-Justice.png",
-      "keywords": ["truth", "fairness", "law", "cause and effect"],
+      "keywords": [
+        "truth",
+        "fairness",
+        "law",
+        "cause and effect"
+      ],
       "archetype": "Balance",
       "hermetic_principle": "Cause and Effect",
       "upright": "Justice, truth, fairness, accountability. Justice weighs actions and consequences with clear sight. What truth needs acknowledgment?",
@@ -156,7 +216,12 @@
       "number": 12,
       "numeral": "XII",
       "image": "12-TheHangedMan.png",
-      "keywords": ["surrender", "sacrifice", "new perspective", "letting go"],
+      "keywords": [
+        "surrender",
+        "sacrifice",
+        "new perspective",
+        "letting go"
+      ],
       "archetype": "Sacrifice",
       "hermetic_principle": "Rhythm",
       "upright": "Surrender, sacrifice, new perspective, waiting. The Hanged Man sees the world differently because he surrendered control. What might you see if you let go?",
@@ -168,7 +233,12 @@
       "number": 13,
       "numeral": "XIII",
       "image": "13-Death.png",
-      "keywords": ["endings", "transformation", "change", "transition"],
+      "keywords": [
+        "endings",
+        "transformation",
+        "change",
+        "transition"
+      ],
       "archetype": "Transformation",
       "hermetic_principle": "Vibration",
       "upright": "Endings, transformation, change, release. Death clears what no longer serves so new growth can emerge. What needs to die?",
@@ -180,7 +250,12 @@
       "number": 14,
       "numeral": "XIV",
       "image": "14-Temperance.png",
-      "keywords": ["balance", "moderation", "patience", "alchemy"],
+      "keywords": [
+        "balance",
+        "moderation",
+        "patience",
+        "alchemy"
+      ],
       "archetype": "Integration",
       "hermetic_principle": "Polarity",
       "upright": "Balance, moderation, patience, alchemy, integration. Temperance blends opposites into something greater than either. What extremes need balancing?",
@@ -192,7 +267,12 @@
       "number": 15,
       "numeral": "XV",
       "image": "15-TheDevil.png",
-      "keywords": ["shadow", "bondage", "materialism", "limitation"],
+      "keywords": [
+        "shadow",
+        "bondage",
+        "materialism",
+        "limitation"
+      ],
       "archetype": "The Shadow",
       "hermetic_principle": "Polarity",
       "upright": "Shadow, bondage, addiction, materialism, limiting beliefs. The Devil shows where we've chained ourselves. What do you believe binds you?",
@@ -204,7 +284,12 @@
       "number": 16,
       "numeral": "XVI",
       "image": "16-TheTower.png",
-      "keywords": ["upheaval", "revelation", "sudden change", "liberation"],
+      "keywords": [
+        "upheaval",
+        "revelation",
+        "sudden change",
+        "liberation"
+      ],
       "archetype": "Destruction",
       "hermetic_principle": "Vibration",
       "upright": "Upheaval, revelation, liberation through destruction, truth. The Tower strikes down what was built on false foundations. What needs to fall?",
@@ -216,7 +301,12 @@
       "number": 17,
       "numeral": "XVII",
       "image": "17-TheStar.png",
-      "keywords": ["hope", "faith", "renewal", "inspiration"],
+      "keywords": [
+        "hope",
+        "faith",
+        "renewal",
+        "inspiration"
+      ],
       "archetype": "Hope",
       "hermetic_principle": "Rhythm",
       "upright": "Hope, faith, renewal, inspiration, serenity. The Star pours healing after the Tower's destruction. What renews your hope?",
@@ -228,7 +318,12 @@
       "number": 18,
       "numeral": "XVIII",
       "image": "18-TheMoon.png",
-      "keywords": ["illusion", "fear", "anxiety", "the unconscious"],
+      "keywords": [
+        "illusion",
+        "fear",
+        "anxiety",
+        "the unconscious"
+      ],
       "archetype": "The Unconscious",
       "hermetic_principle": "Polarity",
       "upright": "Illusion, fear, unconscious, dreams, intuition. The Moon illuminates the hidden path through shadows. What fears distort your vision?",
@@ -240,7 +335,12 @@
       "number": 19,
       "numeral": "XIX",
       "image": "19-TheSun.png",
-      "keywords": ["joy", "success", "vitality", "positivity"],
+      "keywords": [
+        "joy",
+        "success",
+        "vitality",
+        "positivity"
+      ],
       "archetype": "Consciousness",
       "hermetic_principle": "Mentalism",
       "upright": "Joy, success, vitality, positivity, consciousness. The Sun radiates life-giving clarity. What brings you genuine joy?",
@@ -252,7 +352,12 @@
       "number": 20,
       "numeral": "XX",
       "image": "20-Judgement.png",
-      "keywords": ["rebirth", "calling", "absolution", "inner calling"],
+      "keywords": [
+        "rebirth",
+        "calling",
+        "absolution",
+        "inner calling"
+      ],
       "archetype": "Rebirth",
       "hermetic_principle": "Cause and Effect",
       "upright": "Rebirth, judgement, calling, absolution, awakening. Judgement summons us to rise into our highest self. What is calling you?",
@@ -264,7 +369,12 @@
       "number": 21,
       "numeral": "XXI",
       "image": "21-TheWorld.png",
-      "keywords": ["completion", "integration", "accomplishment", "wholeness"],
+      "keywords": [
+        "completion",
+        "integration",
+        "accomplishment",
+        "wholeness"
+      ],
       "archetype": "Individuation",
       "hermetic_principle": "All Seven",
       "upright": "Completion, integration, accomplishment, wholeness. The World celebrates the dance of integration - the Fool transformed. What cycle is completing?",
@@ -284,7 +394,15 @@
           "number": 1,
           "image": "Wands01.png",
           "upright": "Inspiration, new beginnings, potential, creative spark",
-          "reversed": "Delays, blocked creativity, lack of direction"
+          "reversed": "Delays, blocked creativity, lack of direction",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         },
         {
           "id": "wands_02",
@@ -292,7 +410,15 @@
           "number": 2,
           "image": "Wands02.png",
           "upright": "Planning, future vision, decisions, discovery",
-          "reversed": "Fear of change, lack of planning, playing it safe"
+          "reversed": "Fear of change, lack of planning, playing it safe",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         },
         {
           "id": "wands_03",
@@ -300,7 +426,15 @@
           "number": 3,
           "image": "Wands03.png",
           "upright": "Expansion, foresight, overseas opportunities, progress",
-          "reversed": "Obstacles, delays, frustration, lack of foresight"
+          "reversed": "Obstacles, delays, frustration, lack of foresight",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         },
         {
           "id": "wands_04",
@@ -308,7 +442,15 @@
           "number": 4,
           "image": "Wands04.png",
           "upright": "Celebration, harmony, homecoming, community",
-          "reversed": "Lack of support, transience, home conflicts"
+          "reversed": "Lack of support, transience, home conflicts",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         },
         {
           "id": "wands_05",
@@ -316,7 +458,15 @@
           "number": 5,
           "image": "Wands05.png",
           "upright": "Competition, conflict, rivalry, diversity",
-          "reversed": "Avoiding conflict, inner conflict, resolution"
+          "reversed": "Avoiding conflict, inner conflict, resolution",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         },
         {
           "id": "wands_06",
@@ -324,7 +474,15 @@
           "number": 6,
           "image": "Wands06.png",
           "upright": "Victory, recognition, success, progress",
-          "reversed": "Egotism, fall from grace, lack of recognition"
+          "reversed": "Egotism, fall from grace, lack of recognition",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         },
         {
           "id": "wands_07",
@@ -332,7 +490,15 @@
           "number": 7,
           "image": "Wands07.png",
           "upright": "Challenge, competition, perseverance, defense",
-          "reversed": "Exhaustion, giving up, overwhelmed"
+          "reversed": "Exhaustion, giving up, overwhelmed",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         },
         {
           "id": "wands_08",
@@ -340,7 +506,15 @@
           "number": 8,
           "image": "Wands08.png",
           "upright": "Movement, speed, progress, swift action",
-          "reversed": "Delays, frustration, waiting, scattered energy"
+          "reversed": "Delays, frustration, waiting, scattered energy",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         },
         {
           "id": "wands_09",
@@ -348,7 +522,15 @@
           "number": 9,
           "image": "Wands09.png",
           "upright": "Resilience, persistence, last stand, courage",
-          "reversed": "Exhaustion, paranoia, defensive, giving up"
+          "reversed": "Exhaustion, paranoia, defensive, giving up",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         },
         {
           "id": "wands_10",
@@ -356,7 +538,15 @@
           "number": 10,
           "image": "Wands10.png",
           "upright": "Burden, responsibility, hard work, achievement",
-          "reversed": "Burnout, delegation, release of burdens"
+          "reversed": "Burnout, delegation, release of burdens",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         },
         {
           "id": "wands_11",
@@ -365,7 +555,15 @@
           "image": "Wands11.png",
           "court": "Page",
           "upright": "Enthusiasm, exploration, discovery, free spirit",
-          "reversed": "Setbacks, lack of direction, procrastination"
+          "reversed": "Setbacks, lack of direction, procrastination",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         },
         {
           "id": "wands_12",
@@ -374,7 +572,15 @@
           "image": "Wands12.png",
           "court": "Knight",
           "upright": "Energy, passion, adventure, impulsiveness",
-          "reversed": "Haste, scattered energy, delays, frustration"
+          "reversed": "Haste, scattered energy, delays, frustration",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         },
         {
           "id": "wands_13",
@@ -383,7 +589,15 @@
           "image": "Wands13.png",
           "court": "Queen",
           "upright": "Courage, confidence, independence, warmth",
-          "reversed": "Demanding, jealousy, selfishness, insecurity"
+          "reversed": "Demanding, jealousy, selfishness, insecurity",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         },
         {
           "id": "wands_14",
@@ -392,7 +606,15 @@
           "image": "Wands14.png",
           "court": "King",
           "upright": "Leadership, vision, honor, entrepreneurship",
-          "reversed": "Impulsiveness, haste, ruthlessness, overbearing"
+          "reversed": "Impulsiveness, haste, ruthlessness, overbearing",
+          "keywords": [
+            "fire",
+            "creation",
+            "passion",
+            "action"
+          ],
+          "archetype": "The Creator",
+          "hermetic_principle": "Correspondence"
         }
       ]
     },
@@ -408,7 +630,15 @@
           "number": 1,
           "image": "Cups01.png",
           "upright": "New love, compassion, creativity, overwhelming emotion",
-          "reversed": "Blocked emotions, emptiness, self-love needed"
+          "reversed": "Blocked emotions, emptiness, self-love needed",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         },
         {
           "id": "cups_02",
@@ -416,7 +646,15 @@
           "number": 2,
           "image": "Cups02.png",
           "upright": "Partnership, unity, connection, love",
-          "reversed": "Disconnection, imbalance, broken communication"
+          "reversed": "Disconnection, imbalance, broken communication",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         },
         {
           "id": "cups_03",
@@ -424,7 +662,15 @@
           "number": 3,
           "image": "Cups03.png",
           "upright": "Celebration, friendship, creativity, community",
-          "reversed": "Overindulgence, gossip, isolation"
+          "reversed": "Overindulgence, gossip, isolation",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         },
         {
           "id": "cups_04",
@@ -432,7 +678,15 @@
           "number": 4,
           "image": "Cups04.png",
           "upright": "Apathy, contemplation, disconnection, missed opportunity",
-          "reversed": "Sudden awareness, acceptance, moving on"
+          "reversed": "Sudden awareness, acceptance, moving on",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         },
         {
           "id": "cups_05",
@@ -440,7 +694,15 @@
           "number": 5,
           "image": "Cups05.png",
           "upright": "Loss, grief, disappointment, regret",
-          "reversed": "Acceptance, moving on, finding peace"
+          "reversed": "Acceptance, moving on, finding peace",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         },
         {
           "id": "cups_06",
@@ -448,7 +710,15 @@
           "number": 6,
           "image": "Cups06.png",
           "upright": "Nostalgia, childhood, innocence, reunion",
-          "reversed": "Living in the past, naivety, unrealistic"
+          "reversed": "Living in the past, naivety, unrealistic",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         },
         {
           "id": "cups_07",
@@ -456,7 +726,15 @@
           "number": 7,
           "image": "Cups07.png",
           "upright": "Choices, fantasy, illusion, wishful thinking",
-          "reversed": "Clarity, making choices, alignment with reality"
+          "reversed": "Clarity, making choices, alignment with reality",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         },
         {
           "id": "cups_08",
@@ -464,7 +742,15 @@
           "number": 8,
           "image": "Cups08.png",
           "upright": "Walking away, disillusionment, leaving behind",
-          "reversed": "Fear of change, stagnation, avoidance"
+          "reversed": "Fear of change, stagnation, avoidance",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         },
         {
           "id": "cups_09",
@@ -472,7 +758,15 @@
           "number": 9,
           "image": "Cups09.png",
           "upright": "Satisfaction, contentment, gratitude, wish fulfilled",
-          "reversed": "Dissatisfaction, greed, materialism"
+          "reversed": "Dissatisfaction, greed, materialism",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         },
         {
           "id": "cups_10",
@@ -480,7 +774,15 @@
           "number": 10,
           "image": "Cups10.png",
           "upright": "Harmony, happiness, family, emotional fulfillment",
-          "reversed": "Broken family, disharmony, misaligned values"
+          "reversed": "Broken family, disharmony, misaligned values",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         },
         {
           "id": "cups_11",
@@ -489,7 +791,15 @@
           "image": "Cups11.png",
           "court": "Page",
           "upright": "Creative opportunity, intuition, curiosity",
-          "reversed": "Emotional immaturity, creative blocks, mood swings"
+          "reversed": "Emotional immaturity, creative blocks, mood swings",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         },
         {
           "id": "cups_12",
@@ -498,7 +808,15 @@
           "image": "Cups12.png",
           "court": "Knight",
           "upright": "Romance, charm, imagination, following heart",
-          "reversed": "Moodiness, disappointment, unrealistic"
+          "reversed": "Moodiness, disappointment, unrealistic",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         },
         {
           "id": "cups_13",
@@ -507,7 +825,15 @@
           "image": "Cups13.png",
           "court": "Queen",
           "upright": "Compassion, calm, intuition, emotional security",
-          "reversed": "Martyrdom, insecurity, dependence"
+          "reversed": "Martyrdom, insecurity, dependence",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         },
         {
           "id": "cups_14",
@@ -516,7 +842,15 @@
           "image": "Cups14.png",
           "court": "King",
           "upright": "Emotional balance, diplomacy, compassion",
-          "reversed": "Emotional manipulation, moodiness, withdrawal"
+          "reversed": "Emotional manipulation, moodiness, withdrawal",
+          "keywords": [
+            "water",
+            "emotion",
+            "intuition",
+            "connection"
+          ],
+          "archetype": "The Lover",
+          "hermetic_principle": "Polarity"
         }
       ]
     },
@@ -532,7 +866,15 @@
           "number": 1,
           "image": "Swords01.png",
           "upright": "Clarity, breakthrough, new idea, truth",
-          "reversed": "Confusion, chaos, lack of clarity"
+          "reversed": "Confusion, chaos, lack of clarity",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         },
         {
           "id": "swords_02",
@@ -540,7 +882,15 @@
           "number": 2,
           "image": "Swords02.png",
           "upright": "Indecision, stalemate, difficult choices",
-          "reversed": "Information overload, clarity, tough decisions"
+          "reversed": "Information overload, clarity, tough decisions",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         },
         {
           "id": "swords_03",
@@ -548,7 +898,15 @@
           "number": 3,
           "image": "Swords03.png",
           "upright": "Heartbreak, sorrow, grief, emotional pain",
-          "reversed": "Recovery, forgiveness, releasing pain"
+          "reversed": "Recovery, forgiveness, releasing pain",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         },
         {
           "id": "swords_04",
@@ -556,7 +914,15 @@
           "number": 4,
           "image": "Swords04.png",
           "upright": "Rest, restoration, contemplation, recuperation",
-          "reversed": "Restlessness, burnout, lack of progress"
+          "reversed": "Restlessness, burnout, lack of progress",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         },
         {
           "id": "swords_05",
@@ -564,7 +930,15 @@
           "number": 5,
           "image": "Swords05.png",
           "upright": "Conflict, defeat, winning at all costs",
-          "reversed": "Reconciliation, making amends, resolution"
+          "reversed": "Reconciliation, making amends, resolution",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         },
         {
           "id": "swords_06",
@@ -572,7 +946,15 @@
           "number": 6,
           "image": "Swords06.png",
           "upright": "Transition, change, moving on, rite of passage",
-          "reversed": "Resistance to change, unfinished business"
+          "reversed": "Resistance to change, unfinished business",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         },
         {
           "id": "swords_07",
@@ -580,7 +962,15 @@
           "number": 7,
           "image": "Swords07.png",
           "upright": "Deception, strategy, stealth, getting away with something",
-          "reversed": "Confession, conscience, coming clean"
+          "reversed": "Confession, conscience, coming clean",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         },
         {
           "id": "swords_08",
@@ -588,7 +978,15 @@
           "number": 8,
           "image": "Swords08.png",
           "upright": "Restriction, limitation, self-imposed imprisonment",
-          "reversed": "Freedom, release, new perspective"
+          "reversed": "Freedom, release, new perspective",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         },
         {
           "id": "swords_09",
@@ -596,7 +994,15 @@
           "number": 9,
           "image": "Swords09.png",
           "upright": "Anxiety, worry, fear, nightmares",
-          "reversed": "Hope, reaching out, overcoming fear"
+          "reversed": "Hope, reaching out, overcoming fear",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         },
         {
           "id": "swords_10",
@@ -604,7 +1010,15 @@
           "number": 10,
           "image": "Swords10.png",
           "upright": "Painful ending, deep wounds, betrayal, rock bottom",
-          "reversed": "Recovery, regeneration, resisting inevitable end"
+          "reversed": "Recovery, regeneration, resisting inevitable end",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         },
         {
           "id": "swords_11",
@@ -613,7 +1027,15 @@
           "image": "Swords11.png",
           "court": "Page",
           "upright": "Curiosity, new ideas, communication, vigilance",
-          "reversed": "Deception, manipulation, all talk"
+          "reversed": "Deception, manipulation, all talk",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         },
         {
           "id": "swords_12",
@@ -622,7 +1044,15 @@
           "image": "Swords12.png",
           "court": "Knight",
           "upright": "Ambition, action, drive, fast thinking",
-          "reversed": "Recklessness, disregard for others, no direction"
+          "reversed": "Recklessness, disregard for others, no direction",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         },
         {
           "id": "swords_13",
@@ -631,7 +1061,15 @@
           "image": "Swords13.png",
           "court": "Queen",
           "upright": "Clear thinking, independence, direct communication",
-          "reversed": "Coldness, cruelty, bitterness"
+          "reversed": "Coldness, cruelty, bitterness",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         },
         {
           "id": "swords_14",
@@ -640,7 +1078,15 @@
           "image": "Swords14.png",
           "court": "King",
           "upright": "Intellectual power, authority, truth, ethics",
-          "reversed": "Manipulation, tyranny, abuse of power"
+          "reversed": "Manipulation, tyranny, abuse of power",
+          "keywords": [
+            "air",
+            "intellect",
+            "truth",
+            "clarity"
+          ],
+          "archetype": "The Thinker",
+          "hermetic_principle": "Rhythm"
         }
       ]
     },
@@ -656,7 +1102,15 @@
           "number": 1,
           "image": "Pentacles01.png",
           "upright": "New opportunity, prosperity, abundance",
-          "reversed": "Missed opportunity, scarcity mindset"
+          "reversed": "Missed opportunity, scarcity mindset",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         },
         {
           "id": "pentacles_02",
@@ -664,7 +1118,15 @@
           "number": 2,
           "image": "Pentacles02.png",
           "upright": "Balance, adaptability, juggling priorities",
-          "reversed": "Overwhelm, imbalance, disorganization"
+          "reversed": "Overwhelm, imbalance, disorganization",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         },
         {
           "id": "pentacles_03",
@@ -672,7 +1134,15 @@
           "number": 3,
           "image": "Pentacles03.png",
           "upright": "Teamwork, collaboration, learning, implementation",
-          "reversed": "Disharmony, misalignment, working alone"
+          "reversed": "Disharmony, misalignment, working alone",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         },
         {
           "id": "pentacles_04",
@@ -680,7 +1150,15 @@
           "number": 4,
           "image": "Pentacles04.png",
           "upright": "Security, control, conservation, stability",
-          "reversed": "Greed, materialism, self-protection"
+          "reversed": "Greed, materialism, self-protection",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         },
         {
           "id": "pentacles_05",
@@ -688,7 +1166,15 @@
           "number": 5,
           "image": "Pentacles05.png",
           "upright": "Financial loss, poverty, isolation, hardship",
-          "reversed": "Recovery, improvement, spiritual poverty"
+          "reversed": "Recovery, improvement, spiritual poverty",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         },
         {
           "id": "pentacles_06",
@@ -696,7 +1182,15 @@
           "number": 6,
           "image": "Pentacles06.png",
           "upright": "Generosity, charity, giving, receiving",
-          "reversed": "Strings attached, debt, one-sided charity"
+          "reversed": "Strings attached, debt, one-sided charity",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         },
         {
           "id": "pentacles_07",
@@ -704,7 +1198,15 @@
           "number": 7,
           "image": "Pentacles07.png",
           "upright": "Long-term vision, patience, investment, reward",
-          "reversed": "Impatience, bad investment, lack of reward"
+          "reversed": "Impatience, bad investment, lack of reward",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         },
         {
           "id": "pentacles_08",
@@ -712,7 +1214,15 @@
           "number": 8,
           "image": "Pentacles08.png",
           "upright": "Apprenticeship, skill development, diligence",
-          "reversed": "Perfectionism, lack of focus, no motivation"
+          "reversed": "Perfectionism, lack of focus, no motivation",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         },
         {
           "id": "pentacles_09",
@@ -720,7 +1230,15 @@
           "number": 9,
           "image": "Pentacles09.png",
           "upright": "Abundance, luxury, self-sufficiency, independence",
-          "reversed": "Financial dependence, hustling, superficiality"
+          "reversed": "Financial dependence, hustling, superficiality",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         },
         {
           "id": "pentacles_10",
@@ -728,7 +1246,15 @@
           "number": 10,
           "image": "Pentacles10.png",
           "upright": "Wealth, inheritance, family, establishment",
-          "reversed": "Financial failure, family disputes, instability"
+          "reversed": "Financial failure, family disputes, instability",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         },
         {
           "id": "pentacles_11",
@@ -737,7 +1263,15 @@
           "image": "Pentacles11.png",
           "court": "Page",
           "upright": "Ambition, diligence, new financial opportunity",
-          "reversed": "Laziness, missed opportunity, procrastination"
+          "reversed": "Laziness, missed opportunity, procrastination",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         },
         {
           "id": "pentacles_12",
@@ -746,7 +1280,15 @@
           "image": "Pentacles12.png",
           "court": "Knight",
           "upright": "Efficiency, routine, responsibility, hard work",
-          "reversed": "Boredom, laziness, stagnation, perfectionism"
+          "reversed": "Boredom, laziness, stagnation, perfectionism",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         },
         {
           "id": "pentacles_13",
@@ -755,7 +1297,15 @@
           "image": "Pentacles13.png",
           "court": "Queen",
           "upright": "Nurturing, practical, providing, down-to-earth",
-          "reversed": "Financial independence, self-care, smothering"
+          "reversed": "Financial independence, self-care, smothering",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         },
         {
           "id": "pentacles_14",
@@ -764,7 +1314,15 @@
           "image": "Pentacles14.png",
           "court": "King",
           "upright": "Abundance, security, leadership, discipline",
-          "reversed": "Greed, materialism, corruption"
+          "reversed": "Greed, materialism, corruption",
+          "keywords": [
+            "earth",
+            "material",
+            "manifestation",
+            "abundance"
+          ],
+          "archetype": "The Keeper",
+          "hermetic_principle": "Mentalism"
         }
       ]
     }
@@ -788,4 +1346,3 @@
     "King": "Master (outward) - Authority, mastery, directing, active"
   }
 }
-

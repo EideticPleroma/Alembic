@@ -150,6 +150,12 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({
                     </div>
                   </div>
                 )}
+
+                {!card.archetype && !card.hermetic_principle && !card.keywords && (
+                  <div className="text-sm text-silver/60 italic">
+                    This card's details are being prepared.
+                  </div>
+                )}
               </div>
             </div>
 
