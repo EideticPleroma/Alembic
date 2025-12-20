@@ -4,6 +4,7 @@ Supports both local (Ollama) and cloud (Grok) providers.
 """
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 import httpx
 import structlog
@@ -11,11 +12,27 @@ import structlog
 logger = structlog.get_logger(__name__)
 
 
+@dataclass
+class LLMResponse:
+    """Response from LLM including content and usage metrics."""
+
+    content: str
+    model: str
+    input_tokens: int
+    output_tokens: int
+    total_tokens: int
+    cost_usd: float
+
+    def __str__(self) -> str:
+        """Return the content for backwards compatibility."""
+        return self.content
+
+
 class LLMClient(ABC):
     """Abstract base class for LLM providers."""
 
     @abstractmethod
-    async def generate(self, system_prompt: str, user_prompt: str) -> str:
+    async def generate(self, system_prompt: str, user_prompt: str) -> LLMResponse:
         """Generate a completion from the LLM.
 
         Args:
@@ -23,7 +40,7 @@ class LLMClient(ABC):
             user_prompt: User's message/question
 
         Returns:
-            str: Model's response
+            LLMResponse: Model's response with usage metrics
 
         Raises:
             Exception: If the LLM call fails
@@ -50,7 +67,7 @@ class OllamaClient(LLMClient):
         self.model = model
         self.client = httpx.AsyncClient(timeout=120.0)
 
-    async def generate(self, system_prompt: str, user_prompt: str) -> str:
+    async def generate(self, system_prompt: str, user_prompt: str) -> LLMResponse:
         """Generate response using Ollama.
 
         Args:
@@ -58,7 +75,7 @@ class OllamaClient(LLMClient):
             user_prompt: User message
 
         Returns:
-            str: Model response
+            LLMResponse: Model response with usage metrics
         """
         try:
             response = await self.client.post(
@@ -75,7 +92,30 @@ class OllamaClient(LLMClient):
 
             result = response.json()
             response_text = result.get("response", "")
-            return str(response_text).strip()
+
+            # Ollama provides token counts in response
+            input_tokens = result.get("prompt_eval_count", 0)
+            output_tokens = result.get("eval_count", 0)
+
+            llm_response = LLMResponse(
+                content=str(response_text).strip(),
+                model=self.model,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                total_tokens=input_tokens + output_tokens,
+                cost_usd=0.0,  # Local models are free
+            )
+
+            logger.info(
+                "ollama_generation_complete",
+                model=self.model,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                total_tokens=llm_response.total_tokens,
+                cost_usd=0.0,
+            )
+
+            return llm_response
 
         except Exception as e:
             logger.error("ollama_error", error=str(e), model=self.model)
@@ -108,18 +148,42 @@ class GrokClient(LLMClient):
     Production LLM provider. Requires XAI_API_KEY environment variable.
     """
 
-    def __init__(self, api_key: str):
+    # Grok pricing per 1M tokens (as of Dec 2024)
+    # grok-beta: $5/1M input, $15/1M output
+    # grok-2-1212: $2/1M input, $10/1M output
+    PRICING = {
+        "grok-beta": {"input": 5.0, "output": 15.0},
+        "grok-2-1212": {"input": 2.0, "output": 10.0},
+    }
+
+    def __init__(self, api_key: str, model: str = "grok-beta"):
         """Initialize Grok client.
 
         Args:
             api_key: xAI API key
+            model: Grok model to use (grok-beta or grok-2-1212)
         """
         self.api_key = api_key
         self.base_url = "https://api.x.ai/v1"
-        self.model = "grok-beta"
+        self.model = model
         self.client = httpx.AsyncClient(timeout=60.0)
 
-    async def generate(self, system_prompt: str, user_prompt: str) -> str:
+    def _calculate_cost(self, input_tokens: int, output_tokens: int) -> float:
+        """Calculate cost in USD based on token usage.
+
+        Args:
+            input_tokens: Number of input tokens
+            output_tokens: Number of output tokens
+
+        Returns:
+            float: Cost in USD
+        """
+        pricing = self.PRICING.get(self.model, self.PRICING["grok-beta"])
+        input_cost = (input_tokens / 1_000_000) * pricing["input"]
+        output_cost = (output_tokens / 1_000_000) * pricing["output"]
+        return input_cost + output_cost
+
+    async def generate(self, system_prompt: str, user_prompt: str) -> LLMResponse:
         """Generate response using Grok API.
 
         Args:
@@ -127,7 +191,7 @@ class GrokClient(LLMClient):
             user_prompt: User message
 
         Returns:
-            str: Model response
+            LLMResponse: Model response with usage metrics
         """
         try:
             response = await self.client.post(
@@ -147,7 +211,34 @@ class GrokClient(LLMClient):
 
             result = response.json()
             content = result["choices"][0]["message"]["content"]
-            return str(content).strip()
+
+            # Extract token usage from response
+            usage = result.get("usage", {})
+            input_tokens = usage.get("prompt_tokens", 0)
+            output_tokens = usage.get("completion_tokens", 0)
+            total_tokens = usage.get("total_tokens", input_tokens + output_tokens)
+
+            cost_usd = self._calculate_cost(input_tokens, output_tokens)
+
+            llm_response = LLMResponse(
+                content=str(content).strip(),
+                model=self.model,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                total_tokens=total_tokens,
+                cost_usd=cost_usd,
+            )
+
+            logger.info(
+                "grok_generation_complete",
+                model=self.model,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                total_tokens=total_tokens,
+                cost_usd=f"${cost_usd:.6f}",
+            )
+
+            return llm_response
 
         except Exception as e:
             logger.error("grok_error", error=str(e))

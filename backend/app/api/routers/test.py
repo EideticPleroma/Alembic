@@ -103,18 +103,31 @@ async def test_llm(prompt: str = "What is the meaning of life?") -> dict[str, An
         )
 
         # Simple test
-        response = await client.generate(
+        llm_response = await client.generate(
             system_prompt="You are a helpful assistant.",
             user_prompt=prompt,
         )
 
-        logger.info("llm_test_success", response_length=len(response))
+        logger.info(
+            "llm_test_success",
+            response_length=len(llm_response.content),
+            model=llm_response.model,
+            total_tokens=llm_response.total_tokens,
+            cost_usd=llm_response.cost_usd,
+        )
 
         return {
             "status": "success",
             "provider": "ollama" if settings.use_local_llm else "grok",
+            "model": llm_response.model,
             "prompt": prompt,
-            "response": response,
+            "response": llm_response.content,
+            "usage": {
+                "input_tokens": llm_response.input_tokens,
+                "output_tokens": llm_response.output_tokens,
+                "total_tokens": llm_response.total_tokens,
+                "cost_usd": llm_response.cost_usd,
+            },
         }
 
     except Exception as e:
@@ -222,7 +235,7 @@ async def test_reading(
             grok_api_key=settings.xai_api_key,
         )
 
-        interpretation = await client.generate(
+        llm_response = await client.generate(
             system_prompt=PromptTemplates.SYSTEM_PROMPT,
             user_prompt=prompt,
         )
@@ -231,6 +244,9 @@ async def test_reading(
             "reading_test_success",
             question=question,
             cards=[c["name"] for c in cards],
+            model=llm_response.model,
+            total_tokens=llm_response.total_tokens,
+            cost_usd=llm_response.cost_usd,
         )
 
         return {
@@ -251,7 +267,14 @@ async def test_reading(
                 }
                 for i, card in enumerate(cards)
             ],
-            "interpretation": interpretation,
+            "interpretation": llm_response.content,
+            "usage": {
+                "model": llm_response.model,
+                "input_tokens": llm_response.input_tokens,
+                "output_tokens": llm_response.output_tokens,
+                "total_tokens": llm_response.total_tokens,
+                "cost_usd": llm_response.cost_usd,
+            },
         }
 
     except Exception as e:

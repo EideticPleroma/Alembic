@@ -5,14 +5,25 @@ from unittest.mock import patch
 import pytest
 from fastapi.testclient import TestClient
 
+from app.core.llm.client import LLMResponse
+
 
 @pytest.fixture
 def mock_llm_generate():  # type: ignore[no-untyped-def]
     """Mock LLM generation to avoid real API calls."""
 
-    async def mock_generate(self: object, system_prompt: str, user_prompt: str) -> str:
+    async def mock_generate(
+        self: object, system_prompt: str, user_prompt: str
+    ) -> LLMResponse:
         _ = (self, system_prompt, user_prompt)
-        return "This is a mock interpretation generated for testing purposes."
+        return LLMResponse(
+            content="This is a mock interpretation generated for testing purposes.",
+            model="mock-model",
+            input_tokens=100,
+            output_tokens=50,
+            total_tokens=150,
+            cost_usd=0.0,
+        )
 
     return mock_generate
 

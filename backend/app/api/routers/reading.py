@@ -95,7 +95,7 @@ Please provide a meaningful interpretation that honors each card's meaning and p
 
         # Generate interpretation
         llm_client = LLMFactory.get_instance()
-        interpretation = await llm_client.generate(
+        llm_response = await llm_client.generate(
             system_prompt=PromptTemplates.SYSTEM_PROMPT,
             user_prompt=user_prompt,
         )
@@ -103,7 +103,12 @@ Please provide a meaningful interpretation that honors each card's meaning and p
         logger.info(
             "reading_interpretation_generated",
             spread_type=request.spread_type.value,
-            interpretation_length=len(interpretation),
+            interpretation_length=len(llm_response.content),
+            model=llm_response.model,
+            input_tokens=llm_response.input_tokens,
+            output_tokens=llm_response.output_tokens,
+            total_tokens=llm_response.total_tokens,
+            cost_usd=f"${llm_response.cost_usd:.6f}",
         )
 
         # Build response
@@ -133,7 +138,7 @@ Please provide a meaningful interpretation that honors each card's meaning and p
             question=request.question,
             spread_type=request.spread_type,
             cards=cards_response,
-            interpretation=interpretation,
+            interpretation=llm_response.content,
             created_at=datetime.now(),
         )
 
