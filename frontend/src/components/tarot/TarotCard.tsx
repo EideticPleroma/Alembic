@@ -30,7 +30,7 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
         ref={ref}
         onClick={onClick}
         className={cn(
-          'relative h-48 w-32 cursor-pointer transition-all duration-500 transform',
+          'relative h-full w-full cursor-pointer transition-all duration-500 transform',
           'hover:shadow-lg hover:scale-105',
           isReversed && !isRevealed && '[transform:rotateY(180deg)]'
         )}
@@ -45,7 +45,7 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
               'relative w-full h-full rounded-lg border-2 border-gold/50',
               'bg-gradient-to-br from-midnight/80 to-midnight/60',
               'overflow-hidden shadow-lg transition-all duration-300',
-              'flex flex-col items-center justify-between p-3',
+              'flex flex-col items-center justify-center p-2',
               isReversed && 'rotate-180'
             )}
           >
@@ -56,28 +56,28 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
               )}
             />
 
-            <div className="relative z-10 text-center">
+            {isReversed && (
+              <div className="absolute top-2 left-2 right-2 z-20 text-gold text-xs font-bold text-center">
+                Rev.
+              </div>
+            )}
+
+            <div className="relative z-10 flex-1 flex items-center justify-center min-w-0">
               <img
                 src={card.image_url}
                 alt={card.name}
-                className="w-24 h-32 object-cover rounded opacity-80 hover:opacity-100 transition-opacity"
+                className="w-full h-full object-contain rounded opacity-90 hover:opacity-100 transition-opacity"
               />
             </div>
 
-            <div className="relative z-10 text-center">
+            <div className="relative z-10 text-center mt-2 w-full px-1">
               <h3 className="text-xs font-serif text-gold font-semibold leading-tight truncate w-full">
                 {card.name}
               </h3>
               {position && (
-                <p className="text-xs text-silver/70 mt-1 font-light">{position}</p>
+                <p className="text-xs text-silver/70 font-light">{position}</p>
               )}
             </div>
-
-            {isReversed && (
-              <div className="absolute top-1 right-1 z-20 text-gold text-xs font-bold">
-                Rev.
-              </div>
-            )}
           </div>
         ) : (
           <div className="w-full h-full rounded-lg border-2 border-gold/50 bg-gradient-to-br from-gold/20 to-gold/10 flex items-center justify-center shadow-lg">
