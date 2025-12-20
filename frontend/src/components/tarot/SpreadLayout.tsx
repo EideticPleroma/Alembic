@@ -24,13 +24,13 @@ const SpreadLayout = React.forwardRef<HTMLDivElement, SpreadLayoutProps>(
         case 'one_card':
           return 'flex justify-center items-center';
         case 'three_card':
-          return 'flex justify-center items-center gap-12';
+          return 'flex justify-center items-center gap-16';
         case 'shadow_work':
-          return 'flex justify-center items-center gap-8';
+          return 'flex justify-center items-center gap-12';
         case 'celtic_cross':
-          return 'grid grid-cols-3 gap-4 justify-center items-center w-fit mx-auto';
+          return 'grid grid-cols-3 gap-8 justify-center items-center w-fit mx-auto';
         default:
-          return 'flex justify-center items-center gap-8';
+          return 'flex justify-center items-center gap-12';
       }
     };
 
@@ -57,14 +57,14 @@ const SpreadLayout = React.forwardRef<HTMLDivElement, SpreadLayoutProps>(
       return cards.map((card, index) => (
         <div
           key={`${card.id}-${index}`}
-          className={cn('flex justify-center items-center', getCardGridPosition(index))}
-          onClick={() => onCardClick?.(index)}
+          className={cn('flex justify-center items-center w-48', getCardGridPosition(index))}
         >
           <TarotCard
             card={card}
             position={card.position}
             isReversed={card.is_reversed}
             isRevealed={true}
+            onClick={() => onCardClick?.(index)}
           />
         </div>
       ));

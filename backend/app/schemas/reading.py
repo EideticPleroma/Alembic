@@ -39,6 +39,13 @@ class CardInReading(BaseModel):
         position: Position in spread (e.g., "Past", "Present")
         is_reversed: Whether card is reversed (shadow/blocked energy)
         image_url: URL to card image
+        number: Card number (for arcana cards)
+        numeral: Roman numeral (for major arcana)
+        keywords: List of keywords associated with the card
+        archetype: Jungian archetype name
+        hermetic_principle: Associated hermetic principle
+        upright: Meaning when upright
+        reversed: Meaning when reversed
     """
 
     id: str
@@ -46,6 +53,13 @@ class CardInReading(BaseModel):
     position: str
     is_reversed: bool
     image_url: str
+    number: int | None = None
+    numeral: str | None = None
+    keywords: list[str] | None = None
+    archetype: str | None = None
+    hermetic_principle: str | None = None
+    upright: str | None = None
+    reversed: str | None = None
 
 
 class ReadingResponse(BaseModel):

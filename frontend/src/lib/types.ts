@@ -6,6 +6,13 @@ export interface CardInReading {
   position: string;
   is_reversed: boolean;
   image_url: string;
+  number?: number;
+  numeral?: string;
+  keywords?: string[];
+  archetype?: string;
+  hermetic_principle?: string;
+  upright?: string;
+  reversed?: string;
 }
 
 export interface Reading {

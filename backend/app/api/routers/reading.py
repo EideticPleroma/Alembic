@@ -118,6 +118,13 @@ Please provide a meaningful interpretation that honors each card's meaning and p
                 position=position.name,
                 is_reversed=card.get("is_reversed", False),
                 image_url=f"/cards/{card.get('image', 'unknown')}",
+                number=card.get("number"),
+                numeral=card.get("numeral"),
+                keywords=card.get("keywords"),
+                archetype=card.get("archetype"),
+                hermetic_principle=card.get("hermetic_principle"),
+                upright=card.get("upright"),
+                reversed=card.get("reversed"),
             )
             cards_response.append(card_response)
 

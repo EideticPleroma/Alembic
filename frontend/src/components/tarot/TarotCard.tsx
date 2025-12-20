@@ -7,6 +7,13 @@ interface TarotCardProps {
     id: string;
     name: string;
     image_url: string;
+    number?: number;
+    numeral?: string;
+    keywords?: string[];
+    archetype?: string;
+    hermetic_principle?: string;
+    upright?: string;
+    reversed?: string;
   };
   position?: string;
   isReversed?: boolean;
@@ -27,13 +34,20 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
   ) => {
     return (
       <div ref={ref} className="flex flex-col items-center w-full">
+        {/* Reversed Label - Above the frame, never rotates */}
+        {isRevealed && isReversed && (
+          <div className="text-gold text-xs font-bold text-center mb-1">
+            Reversed
+          </div>
+        )}
+
         {/* Card Image Container */}
         <div
           onClick={onClick}
           className={cn(
-            'relative w-full aspect-video cursor-pointer transition-all duration-500 transform',
+            'relative w-full aspect-[2/3] cursor-pointer transition-all duration-500 transform origin-center',
             'hover:shadow-lg hover:scale-105',
-            isReversed && !isRevealed && '[transform:rotateY(180deg)]'
+            isReversed && 'rotate-180'
           )}
           style={{
             perspective: '1000px',
@@ -45,31 +59,23 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
               className={cn(
                 'relative w-full h-full rounded-lg border-2 border-gold/50',
                 'bg-gradient-to-br from-midnight/80 to-midnight/60',
-                'overflow-hidden shadow-lg transition-all duration-300',
-                'flex flex-col items-center justify-center p-2',
-                isReversed && 'rotate-180'
+                'overflow-hidden shadow-lg transition-all duration-300'
               )}
             >
+              {/* Radial gradient overlay */}
               <div
                 className={cn(
-                  'absolute inset-0 rounded-lg opacity-20 pointer-events-none',
+                  'absolute inset-0 rounded-lg opacity-20 pointer-events-none z-10',
                   'bg-radial from-gold/30 to-transparent'
                 )}
               />
 
-              {isReversed && (
-                <div className="absolute top-2 left-2 right-2 z-20 text-gold text-xs font-bold text-center">
-                  Rev.
-                </div>
-              )}
-
-              <div className="relative z-10 flex-1 flex items-center justify-center min-w-0 w-full">
-                <img
-                  src={card.image_url}
-                  alt={card.name}
-                  className="w-full h-full object-contain rounded opacity-90 hover:opacity-100 transition-opacity"
-                />
-              </div>
+              {/* Card image fills the entire container */}
+              <img
+                src={card.image_url}
+                alt={card.name}
+                className="absolute inset-0 w-full h-full object-cover rounded opacity-90 hover:opacity-100 transition-opacity"
+              />
             </div>
           ) : (
             <div className="w-full h-full rounded-lg border-2 border-gold/50 bg-gradient-to-br from-gold/20 to-gold/10 flex items-center justify-center shadow-lg">

@@ -38,13 +38,30 @@ Remember: You are a guide to the querent's own wisdom. The cards are the message
 - **Present** (Current energy): {present_card} {present_reversal}
 - **Future** (Emerging potential): {future_card} {future_reversal}
 
-Please provide a cohesive interpretation that:
-1. Honors each card's individual meaning and position
-2. Shows how the three cards speak to each other
-3. Illuminates the querent's situation with both clarity and depth
-4. Ends with 2-3 reflection questions for the querent to sit with
+Provide your interpretation using EXACTLY this markdown structure:
 
-Speak directly to the querent. Use "you" language. Be wise but warm."""
+## The Cards Speak
+
+### Past: [Card Name]
+[2-3 sentences interpreting this card in the Past position, relating to the querent's foundation and what has led them here.]
+
+### Present: [Card Name]
+[2-3 sentences interpreting this card in the Present position, addressing the current energy and situation.]
+
+### Future: [Card Name]
+[2-3 sentences interpreting this card in the Future position, illuminating emerging potential and pathways.]
+
+## The Weaving
+[3-4 sentences showing how the three cards speak to each other as a unified narrative. Connect the threads.]
+
+## Reflection Questions
+- [First reflection question for the querent]
+- [Second reflection question for the querent]
+- [Third reflection question - optional]
+
+---
+
+Speak directly to the querent using "you" language. Be wise but warm. Honor both light and shadow."""
 
     FOLLOW_UP_TEMPLATE = """The seeker is continuing their reading with a follow-up question.
 
