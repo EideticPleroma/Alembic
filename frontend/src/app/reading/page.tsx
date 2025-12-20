@@ -13,86 +13,35 @@ import { Reading, Spread, SpreadType, CardInReading } from '@/lib/types';
  * Parses markdown-like structure from LLM response.
  */
 function InterpretationContent({ content }: { content: string }) {
-  // Parse the content into sections
-  const sections = content.split(/(?=^## )/gm).filter(Boolean);
+  // Split by main sections (## headers)
+  const sections = content.split(/^## /gm).filter(Boolean);
 
-  const renderSection = (section: string, index: number) => {
-    const lines = section.trim().split('\n');
-    const headerMatch = lines[0].match(/^##\s+(.+)/);
-
-    if (!headerMatch) {
-      // Plain paragraph
-      return (
-        <p key={index} className="text-cream/80 leading-relaxed mb-4">
-          {section}
-        </p>
-      );
-    }
-
-    const headerTitle = headerMatch[1];
+  const renderSection = (rawSection: string) => {
+    const lines = rawSection.split('\n');
+    const headerTitle = lines[0].trim();
     const bodyLines = lines.slice(1).join('\n').trim();
 
-    // Check for subsections (### headers)
-    const hasSubsections = bodyLines.includes('### ');
-
-    if (hasSubsections) {
-      const subsections = bodyLines.split(/(?=^### )/gm).filter(Boolean);
-
-      return (
-        <div key={index} className="mb-6">
-          <h4 className="font-serif text-lg text-gold mb-3 border-b border-gold/20 pb-1">
-            {headerTitle}
-          </h4>
-          {subsections.map((sub, subIndex) => {
-            const subLines = sub.trim().split('\n');
-            const subHeaderMatch = subLines[0].match(/^###\s+(.+)/);
-
-            if (!subHeaderMatch) {
-              return (
-                <p key={subIndex} className="text-cream/80 leading-relaxed mb-3">
-                  {sub}
-                </p>
-              );
-            }
-
-            const subTitle = subHeaderMatch[1];
-            const subBody = subLines.slice(1).join('\n').trim();
-
-            return (
-              <div key={subIndex} className="mb-4">
-                <h5 className="font-semibold text-gold/90 text-sm mb-1">
-                  {subTitle}
-                </h5>
-                <p className="text-cream/80 leading-relaxed text-sm pl-2 border-l-2 border-gold/20">
-                  {subBody}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      );
+    if (!bodyLines) {
+      return null;
     }
 
-    // Check for bullet points
-    const hasBullets = bodyLines.includes('\n- ');
-
-    if (hasBullets) {
-      const bulletParts = bodyLines.split(/(?=^- )/gm);
-      const intro = bulletParts[0].trim();
-      const bullets = bulletParts.slice(1).map((b) => b.replace(/^- /, '').trim());
+    // Handle Reflection Questions section (bullet points)
+    if (headerTitle.toLowerCase().includes('reflection question')) {
+      const bulletParts = bodyLines.split(/\n- /).filter(Boolean);
+      const introText = bulletParts[0]?.includes('?') ? '' : bulletParts[0];
+      const bullets = introText 
+        ? bulletParts.slice(1).map((b) => b.replace(/^- /, '').trim())
+        : bulletParts.map((b) => b.replace(/^- /, '').trim());
 
       return (
-        <div key={index} className="mb-6">
+        <div key={headerTitle} className="mb-6">
           <h4 className="font-serif text-lg text-gold mb-3 border-b border-gold/20 pb-1">
             {headerTitle}
           </h4>
-          {intro && (
-            <p className="text-cream/80 leading-relaxed mb-3 text-sm">{intro}</p>
-          )}
           <ul className="space-y-2">
-            {bullets.map((bullet, bulletIndex) => (
+            {bullets.map((bullet, idx) => (
               <li
-                key={bulletIndex}
+                key={idx}
                 className="text-cream/80 text-sm pl-4 relative before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-gold/60 before:rounded-full"
               >
                 {bullet}
@@ -103,9 +52,56 @@ function InterpretationContent({ content }: { content: string }) {
       );
     }
 
-    // Regular section with body
+    // Handle The Cards Speak section (subsections with ### headers)
+    if (headerTitle.toLowerCase().includes('cards speak')) {
+      const cardSections = bodyLines.split(/^### /).filter(Boolean);
+
+      return (
+        <div key={headerTitle} className="mb-6">
+          <h4 className="font-serif text-lg text-gold mb-4 border-b border-gold/20 pb-1">
+            {headerTitle}
+          </h4>
+          <div className="space-y-4">
+            {cardSections.map((cardSection, idx) => {
+              const cardLines = cardSection.split('\n');
+              const cardTitle = cardLines[0].trim();
+              const cardBody = cardLines.slice(1).join('\n').trim();
+
+              return (
+                <div key={idx} className="bg-midnight/30 rounded-lg p-4 border border-gold/10">
+                  <h5 className="font-semibold text-gold/90 text-sm mb-2">
+                    {cardTitle}
+                  </h5>
+                  <p className="text-cream/80 leading-relaxed text-sm">
+                    {cardBody}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    // Handle The Weaving section
+    if (headerTitle.toLowerCase().includes('weaving')) {
+      return (
+        <div key={headerTitle} className="mb-6">
+          <h4 className="font-serif text-lg text-gold mb-3 border-b border-gold/20 pb-1">
+            {headerTitle}
+          </h4>
+          <div className="bg-gold/5 rounded-lg p-4 border-l-2 border-gold/50">
+            <p className="text-cream/80 leading-relaxed text-sm italic">
+              {bodyLines}
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    // Default section rendering
     return (
-      <div key={index} className="mb-6">
+      <div key={headerTitle} className="mb-6">
         <h4 className="font-serif text-lg text-gold mb-3 border-b border-gold/20 pb-1">
           {headerTitle}
         </h4>
@@ -127,7 +123,11 @@ function InterpretationContent({ content }: { content: string }) {
     );
   }
 
-  return <div>{sections.map(renderSection)}</div>;
+  return (
+    <div className="space-y-2">
+      {sections.map(renderSection).filter(Boolean)}
+    </div>
+  );
 }
 
 export default function ReadingPage() {

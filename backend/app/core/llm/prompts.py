@@ -38,26 +38,26 @@ Remember: You are a guide to the querent's own wisdom. The cards are the message
 - **Present** (Current energy): {present_card} {present_reversal}
 - **Future** (Emerging potential): {future_card} {future_reversal}
 
-Provide your interpretation using EXACTLY this markdown structure:
+CRITICAL: Provide your interpretation using EXACTLY this markdown structure. Do not deviate. Start each section with the exact header shown.
 
 ## The Cards Speak
 
-### Past: [Card Name]
-[2-3 sentences interpreting this card in the Past position, relating to the querent's foundation and what has led them here.]
+### Past: {past_card}
+Write 2-3 sentences interpreting this card in the Past position. Relate it to the querent's foundation and what has led them here. Use "you" language.
 
-### Present: [Card Name]
-[2-3 sentences interpreting this card in the Present position, addressing the current energy and situation.]
+### Present: {present_card}
+Write 2-3 sentences interpreting this card in the Present position. Address the current energy and situation directly. Use "you" language.
 
-### Future: [Card Name]
-[2-3 sentences interpreting this card in the Future position, illuminating emerging potential and pathways.]
+### Future: {future_card}
+Write 2-3 sentences interpreting this card in the Future position. Illuminate emerging potential and pathways. Use "you" language.
 
 ## The Weaving
-[3-4 sentences showing how the three cards speak to each other as a unified narrative. Connect the threads.]
+Write 3-4 sentences showing how the three cards speak to each other as a unified narrative. Connect the threads between past, present, and future. Show the arc of the querent's journey.
 
 ## Reflection Questions
-- [First reflection question for the querent]
-- [Second reflection question for the querent]
-- [Third reflection question - optional]
+- What does the {past_card} reveal about your foundation that you may have overlooked?
+- How is the {present_card} showing up in your current choices and energy?
+- What invitation does the {future_card} extend if you align with its energy?
 
 ---
 
