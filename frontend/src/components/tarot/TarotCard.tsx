@@ -33,19 +33,12 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
     ref
   ) => {
     return (
-      <div ref={ref} className="flex flex-col items-center w-full">
-        {/* Reversed Label - Above the frame, never rotates */}
-        {isRevealed && isReversed && (
-          <div className="text-gold text-xs font-bold text-center mb-1">
-            Reversed
-          </div>
-        )}
-
+      <div ref={ref} className="flex flex-col items-center w-full relative">
         {/* Card Image Container */}
         <div
           onClick={onClick}
           className={cn(
-            'relative w-full aspect-[2/3] cursor-pointer transition-all duration-500 transform origin-center',
+            'relative w-64 aspect-[2/3] cursor-pointer transition-all duration-500 transform origin-center',
             'hover:shadow-lg hover:scale-105',
             isReversed && 'rotate-180'
           )}
@@ -54,6 +47,13 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
             transformStyle: 'preserve-3d',
           }}
         >
+          {/* Reversed Label - Absolutely positioned so it doesn't affect layout */}
+          {isRevealed && isReversed && (
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-gold text-xs font-bold text-center whitespace-nowrap z-20">
+              Reversed
+            </div>
+          )}
+
           {isRevealed ? (
             <div
               className={cn(
@@ -89,7 +89,7 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
 
         {/* Text Below Card - Never Rotates - Only show when revealed */}
         {isRevealed && (
-          <div className="relative z-10 text-center mt-2 w-full px-1">
+          <div className="relative z-10 text-center mt-4 w-full px-1">
             <h3 className="text-xs font-serif text-gold font-semibold leading-tight truncate w-full">
               {card.name}
             </h3>

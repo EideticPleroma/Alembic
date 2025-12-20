@@ -57,7 +57,7 @@ const SpreadLayout = React.forwardRef<HTMLDivElement, SpreadLayoutProps>(
       return cards.map((card, index) => (
         <div
           key={`${card.id}-${index}`}
-          className={cn('flex justify-center items-center w-48', getCardGridPosition(index))}
+          className={cn('flex justify-center items-center', getCardGridPosition(index))}
         >
           <TarotCard
             card={card}
