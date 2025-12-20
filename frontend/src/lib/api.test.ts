@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { APIClient } from './api';
+import type { Reading, Spread } from './types';
 
 describe('APIClient', () => {
   let client: APIClient;
@@ -169,6 +170,131 @@ describe('APIClient', () => {
       const calls = (global.fetch as ReturnType<typeof vi.fn>).mock.calls;
       const callArgs = calls[0];
       expect(callArgs[0]).toBe('http://test-api/api/v1/readings');
+    });
+  });
+
+  describe('createReading', () => {
+    it('sends correct payload to reading endpoint', async () => {
+      const mockResponse: Reading = {
+        id: 'reading-123',
+        question: 'What should I do?',
+        spread_type: 'three_card',
+        cards: [],
+        interpretation: 'Mock interpretation',
+        created_at: new Date().toISOString(),
+      };
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(mockResponse),
+      });
+
+      await client.createReading('What should I do?', 'three_card');
+
+      expect(fetch).toHaveBeenCalledWith(
+        'http://test-api/api/reading',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({
+            question: 'What should I do?',
+            spread_type: 'three_card',
+          }),
+        })
+      );
+    });
+
+    it('returns reading data from API', async () => {
+      const mockResponse: Reading = {
+        id: 'reading-456',
+        question: 'What is my path?',
+        spread_type: 'three_card',
+        cards: [
+          {
+            id: 'c1',
+            name: 'Card 1',
+            position: 'Past',
+            is_reversed: false,
+            image_url: '/c1.png',
+          },
+        ],
+        interpretation: 'Test interpretation',
+        created_at: '2025-12-19T00:00:00Z',
+      };
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(mockResponse),
+      });
+
+      const result = await client.createReading('What is my path?', 'three_card');
+
+      expect(result.id).toBe('reading-456');
+      expect(result.question).toBe('What is my path?');
+      expect(result.cards.length).toBe(1);
+    });
+  });
+
+  describe('getSpreads', () => {
+    it('calls correct endpoint', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve([]),
+      });
+
+      await client.getSpreads();
+
+      expect(fetch).toHaveBeenCalledWith(
+        'http://test-api/api/spreads',
+        expect.objectContaining({
+          method: 'GET',
+        })
+      );
+    });
+
+    it('returns array of spreads', async () => {
+      const mockSpreads: Spread[] = [
+        {
+          name: 'Three Card',
+          spread_id: 'three_card',
+          description: 'A simple three-card spread',
+          card_count: 3,
+          positions: [
+            {
+              position: 0,
+              name: 'Past',
+              meaning: 'The past',
+              guidance: 'What was?',
+            },
+          ],
+          instructions: 'Draw three cards',
+        },
+        {
+          name: 'Single Card',
+          spread_id: 'one_card',
+          description: 'A single card draw',
+          card_count: 1,
+          positions: [
+            {
+              position: 0,
+              name: 'Message',
+              meaning: 'The message',
+              guidance: 'What now?',
+            },
+          ],
+          instructions: 'Draw one card',
+        },
+      ];
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(mockSpreads),
+      });
+
+      const result = await client.getSpreads();
+
+      expect(result.length).toBe(2);
+      expect(result[0].spread_id).toBe('three_card');
+      expect(result[1].spread_id).toBe('one_card');
     });
   });
 });
