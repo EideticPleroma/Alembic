@@ -96,11 +96,7 @@ async def test_llm(prompt: str = "What is the meaning of life?") -> dict[str, An
         from app.core.llm.client import LLMFactory
 
         settings = get_settings()
-        client = LLMFactory.create(
-            use_local=settings.use_local_llm,
-            ollama_base_url=settings.ollama_base_url,
-            grok_api_key=settings.xai_api_key,
-        )
+        client = LLMFactory.create(default_model=settings.llm_default_model)
 
         # Simple test
         llm_response = await client.generate(
@@ -114,11 +110,11 @@ async def test_llm(prompt: str = "What is the meaning of life?") -> dict[str, An
             model=llm_response.model,
             total_tokens=llm_response.total_tokens,
             cost_usd=llm_response.cost_usd,
+            latency_ms=llm_response.latency_ms,
         )
 
         return {
             "status": "success",
-            "provider": "ollama" if settings.use_local_llm else "grok",
             "model": llm_response.model,
             "prompt": prompt,
             "response": llm_response.content,
@@ -127,6 +123,7 @@ async def test_llm(prompt: str = "What is the meaning of life?") -> dict[str, An
                 "output_tokens": llm_response.output_tokens,
                 "total_tokens": llm_response.total_tokens,
                 "cost_usd": llm_response.cost_usd,
+                "latency_ms": llm_response.latency_ms,
             },
         }
 
@@ -229,11 +226,7 @@ async def test_reading(
         )
 
         # Get LLM interpretation
-        client = LLMFactory.create(
-            use_local=settings.use_local_llm,
-            ollama_base_url=settings.ollama_base_url,
-            grok_api_key=settings.xai_api_key,
-        )
+        client = LLMFactory.create(default_model=settings.llm_default_model)
 
         llm_response = await client.generate(
             system_prompt=PromptTemplates.SYSTEM_PROMPT,
@@ -247,6 +240,7 @@ async def test_reading(
             model=llm_response.model,
             total_tokens=llm_response.total_tokens,
             cost_usd=llm_response.cost_usd,
+            latency_ms=llm_response.latency_ms,
         )
 
         return {
@@ -274,6 +268,7 @@ async def test_reading(
                 "output_tokens": llm_response.output_tokens,
                 "total_tokens": llm_response.total_tokens,
                 "cost_usd": llm_response.cost_usd,
+                "latency_ms": llm_response.latency_ms,
             },
         }
 

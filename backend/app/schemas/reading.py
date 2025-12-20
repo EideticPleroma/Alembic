@@ -24,10 +24,15 @@ class ReadingRequest(BaseModel):
     Attributes:
         question: User's question (1-1000 characters)
         spread_type: Type of spread to use
+        model: Optional LLM model override (in litellm format, e.g., "ollama/llama3")
     """
 
     question: str = Field(..., min_length=1, max_length=1000)
     spread_type: SpreadTypeEnum
+    model: str | None = Field(
+        None,
+        description="Optional model override (e.g., 'ollama/llama3', 'xai/grok-4-1-fast-reasoning')",
+    )
 
 
 class CardInReading(BaseModel):

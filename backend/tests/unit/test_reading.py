@@ -13,9 +13,14 @@ def mock_llm_generate():  # type: ignore[no-untyped-def]
     """Mock LLM generation to avoid real API calls."""
 
     async def mock_generate(
-        self: object, system_prompt: str, user_prompt: str
+        self: object,
+        system_prompt: str,
+        user_prompt: str,
+        model: str | None = None,
+        user_id: str | None = None,
+        reading_id: str | None = None,
     ) -> LLMResponse:
-        _ = (self, system_prompt, user_prompt)
+        _ = (self, system_prompt, user_prompt, model, user_id, reading_id)
         return LLMResponse(
             content="This is a mock interpretation generated for testing purposes.",
             model="mock-model",
@@ -23,6 +28,7 @@ def mock_llm_generate():  # type: ignore[no-untyped-def]
             output_tokens=50,
             total_tokens=150,
             cost_usd=0.0,
+            latency_ms=100,
         )
 
     return mock_generate
@@ -35,7 +41,7 @@ class TestCreateReading:
         self, client: TestClient, mock_llm_generate: object
     ) -> None:
         """Successful reading creation returns 201 status."""
-        with patch("app.core.llm.client.OllamaClient.generate", mock_llm_generate):
+        with patch("app.core.llm.client.LLMService.generate", mock_llm_generate):
             response = client.post(
                 "/api/reading",
                 json={
@@ -49,7 +55,7 @@ class TestCreateReading:
         self, client: TestClient, mock_llm_generate: object
     ) -> None:
         """Reading response includes cards array."""
-        with patch("app.core.llm.client.OllamaClient.generate", mock_llm_generate):
+        with patch("app.core.llm.client.LLMService.generate", mock_llm_generate):
             response = client.post(
                 "/api/reading",
                 json={
@@ -66,7 +72,7 @@ class TestCreateReading:
         self, client: TestClient, mock_llm_generate: object
     ) -> None:
         """Reading response includes interpretation."""
-        with patch("app.core.llm.client.OllamaClient.generate", mock_llm_generate):
+        with patch("app.core.llm.client.LLMService.generate", mock_llm_generate):
             response = client.post(
                 "/api/reading",
                 json={
@@ -82,7 +88,7 @@ class TestCreateReading:
         self, client: TestClient, mock_llm_generate: object
     ) -> None:
         """Reading response includes UUID."""
-        with patch("app.core.llm.client.OllamaClient.generate", mock_llm_generate):
+        with patch("app.core.llm.client.LLMService.generate", mock_llm_generate):
             response = client.post(
                 "/api/reading",
                 json={
@@ -128,7 +134,7 @@ class TestCreateReading:
         self, client: TestClient, mock_llm_generate: object
     ) -> None:
         """Three-card spread has Past/Present/Future positions."""
-        with patch("app.core.llm.client.OllamaClient.generate", mock_llm_generate):
+        with patch("app.core.llm.client.LLMService.generate", mock_llm_generate):
             response = client.post(
                 "/api/reading",
                 json={
@@ -146,7 +152,7 @@ class TestCreateReading:
         self, client: TestClient, mock_llm_generate: object
     ) -> None:
         """Response includes created_at timestamp."""
-        with patch("app.core.llm.client.OllamaClient.generate", mock_llm_generate):
+        with patch("app.core.llm.client.LLMService.generate", mock_llm_generate):
             response = client.post(
                 "/api/reading",
                 json={

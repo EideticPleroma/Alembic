@@ -26,7 +26,14 @@ class Settings(BaseSettings):
     supabase_key: str
     supabase_service_key: str
 
-    # LLM
+    # LLM Configuration
+    # Default model in litellm format (provider/model-name)
+    llm_default_model: str = "xai/grok-4-1-fast-reasoning"
+    # Comma-separated list of allowed models for users to choose from
+    llm_allowed_models: str = (
+        "xai/grok-4-1-fast-reasoning,ollama/neural-chat,ollama/llama3"
+    )
+    # Legacy settings (kept for backwards compatibility)
     xai_api_key: str | None = None
     use_local_llm: bool = False
     ollama_base_url: str = "http://localhost:11434"
@@ -53,6 +60,14 @@ class Settings(BaseSettings):
         if isinstance(v, list):
             return v
         return v
+
+    def get_allowed_models(self) -> list[str]:
+        """Parse allowed models from comma-separated string.
+
+        Returns:
+            List of allowed models in litellm format
+        """
+        return [m.strip() for m in self.llm_allowed_models.split(",") if m.strip()]
 
 
 def get_settings() -> Settings:

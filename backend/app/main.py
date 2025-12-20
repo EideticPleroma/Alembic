@@ -32,19 +32,14 @@ async def lifespan(_app: FastAPI) -> Any:
     # Startup
     settings = get_settings()
 
-    # Initialize LLM client based on settings
-    llm_provider = "ollama" if settings.use_local_llm else "grok"
-    LLMFactory.get_instance(
-        use_local=settings.use_local_llm,
-        ollama_base_url=settings.ollama_base_url,
-        grok_api_key=settings.xai_api_key,
-    )
+    # Initialize LLM service using litellm
+    LLMFactory.get_instance(default_model=settings.llm_default_model)
 
     logger.info(
         "startup",
         environment=settings.environment,
         debug=settings.debug,
-        llm_provider=llm_provider,
+        llm_default_model=settings.llm_default_model,
     )
 
     yield

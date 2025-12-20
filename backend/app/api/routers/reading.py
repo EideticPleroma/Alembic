@@ -68,11 +68,13 @@ async def create_reading(request: ReadingRequest) -> ReadingResponse:
         )
 
         # Build prompt based on spread type
-        if request.spread_type == SpreadTypeEnum.THREE_CARD:
-            if len(drawn_cards) != 3:
-                msg = "Three-card spread requires exactly 3 cards"
-                raise HTTPException(status_code=500, detail=msg)
-
+        if request.spread_type == SpreadTypeEnum.ONE_CARD:
+            user_prompt = PromptTemplates.get_one_card_prompt(
+                question=request.question,
+                card=drawn_cards[0],
+                is_reversed=drawn_cards[0].get("is_reversed", False),
+            )
+        elif request.spread_type == SpreadTypeEnum.THREE_CARD:
             user_prompt = PromptTemplates.get_three_card_prompt(
                 question=request.question,
                 past_card=drawn_cards[0],
@@ -82,22 +84,35 @@ async def create_reading(request: ReadingRequest) -> ReadingResponse:
                 present_reversed=drawn_cards[1].get("is_reversed", False),
                 future_reversed=drawn_cards[2].get("is_reversed", False),
             )
+        elif request.spread_type == SpreadTypeEnum.SHADOW_WORK:
+            user_prompt = PromptTemplates.get_shadow_work_prompt(
+                question=request.question,
+                cards=drawn_cards,
+            )
+        elif request.spread_type == SpreadTypeEnum.CELTIC_CROSS:
+            user_prompt = PromptTemplates.get_celtic_cross_prompt(
+                question=request.question,
+                cards=drawn_cards,
+            )
         else:
-            # Generic prompt for other spreads
+            # Fallback for any unknown spread type
             cards_info = ", ".join([f"{c.get('name', 'Unknown')}" for c in drawn_cards])
-            user_prompt = f"""A seeker has drawn cards for reflection on their situation using the {spread.name} spread.
+            user_prompt = f"""A seeker has drawn cards for reflection using the {spread.name} spread.
 
 **Question**: {request.question}
 
 **Cards drawn**: {cards_info}
 
-Please provide a meaningful interpretation that honors each card's meaning and position in the spread. Speak directly to the querent with wisdom and warmth."""
+Please provide a meaningful interpretation that honors each card's meaning and position. Speak directly to the querent with wisdom and warmth."""
 
         # Generate interpretation
         llm_client = LLMFactory.get_instance()
+        reading_id = str(uuid4())
         llm_response = await llm_client.generate(
             system_prompt=PromptTemplates.SYSTEM_PROMPT,
             user_prompt=user_prompt,
+            model=request.model,
+            reading_id=reading_id,
         )
 
         logger.info(
@@ -112,7 +127,6 @@ Please provide a meaningful interpretation that honors each card's meaning and p
         )
 
         # Build response
-        reading_id = str(uuid4())
         cards_response = []
 
         for i, card in enumerate(drawn_cards):

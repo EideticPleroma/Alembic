@@ -11,7 +11,9 @@ erDiagram
     users ||--o{ readings : creates
     users ||--o{ subscriptions : has
     users ||--o{ credit_transactions : has
+    users ||--o{ llm_usage : generates
     readings ||--o{ reading_messages : contains
+    readings ||--o{ llm_usage : tracks
     
     users {
         uuid id PK
@@ -59,6 +61,20 @@ erDiagram
         int amount
         string type
         string description
+        timestamp created_at
+    }
+    
+    llm_usage {
+        uuid id PK
+        uuid user_id FK
+        uuid reading_id FK
+        string model
+        string provider
+        int input_tokens
+        int output_tokens
+        int total_tokens
+        numeric cost_usd
+        int latency_ms
         timestamp created_at
     }
 ```
@@ -276,6 +292,63 @@ CREATE POLICY "Users can view own transactions"
 ON credit_transactions FOR SELECT
 USING (auth.uid() = user_id);
 ```
+
+### llm_usage
+
+Operational data tracking for LLM usage, costs, and performance. This table is ops-only - no content is stored (privacy), only metadata.
+
+```sql
+CREATE TABLE llm_usage (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    reading_id UUID REFERENCES readings(id) ON DELETE SET NULL,
+    model TEXT NOT NULL,
+    provider TEXT NOT NULL,
+    input_tokens INTEGER NOT NULL,
+    output_tokens INTEGER NOT NULL,
+    total_tokens INTEGER NOT NULL,
+    cost_usd NUMERIC(10, 6) NOT NULL,
+    latency_ms INTEGER NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexes for efficient querying and analysis
+CREATE INDEX idx_llm_usage_user_id ON llm_usage(user_id);
+CREATE INDEX idx_llm_usage_reading_id ON llm_usage(reading_id);
+CREATE INDEX idx_llm_usage_created_at ON llm_usage(created_at DESC);
+CREATE INDEX idx_llm_usage_model ON llm_usage(model);
+CREATE INDEX idx_llm_usage_provider ON llm_usage(provider);
+
+-- RLS Policies: Admin-only access (service role for inserts, no user access)
+ALTER TABLE llm_usage ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Disable user access to llm_usage"
+ON llm_usage FOR SELECT
+USING (FALSE);
+```
+
+**Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | UUID | Unique usage record identifier |
+| user_id | UUID | User who triggered the LLM call (nullable if anonymous) |
+| reading_id | UUID | Associated reading ID (nullable for other LLM calls) |
+| model | TEXT | Model name (e.g., "neural-chat", "grok-4-1-fast-reasoning") |
+| provider | TEXT | LLM provider (e.g., "ollama", "xai") |
+| input_tokens | INTEGER | Number of input tokens consumed |
+| output_tokens | INTEGER | Number of output tokens generated |
+| total_tokens | INTEGER | Total tokens used |
+| cost_usd | NUMERIC(10, 6) | Cost in USD (6 decimal precision) |
+| latency_ms | INTEGER | Response latency in milliseconds |
+| created_at | TIMESTAMPTZ | When the LLM call was made |
+
+**Privacy Note:** This table stores no prompt text, response content, or user data beyond IDs. It's designed for operational analysis: cost tracking, performance monitoring, and usage patterns by model/provider.
+
+**Access Pattern:** Service role only. Users cannot query this table directly. Analysis happens via:
+- Admin dashboard queries
+- Scheduled aggregations
+- Cost reporting jobs
 
 ## Helper Functions
 

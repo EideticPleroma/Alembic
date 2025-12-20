@@ -73,23 +73,37 @@ Estimated per-reading cost (assuming ~2K tokens):
 
 ## Implementation
 
-```python
-from litellm import acompletion
+The LLM integration uses litellm for unified provider access:
 
-# Production
-response = await acompletion(
-    model="xai/grok-4.1-fast",
-    messages=[...],
-    api_key=settings.XAI_API_KEY,
+```python
+from app.core.llm.client import LLMFactory
+
+# Get configured LLM service (reads from settings.llm_default_model)
+llm_service = LLMFactory.get_instance()
+
+# Generate with default model
+response = await llm_service.generate(
+    system_prompt="...",
+    user_prompt="...",
 )
 
-# Development (when XAI_API_KEY not set)
-response = await acompletion(
-    model="ollama/llama3.2",
-    messages=[...],
-    api_base="http://localhost:11434",
+# Or override model per-request
+response = await llm_service.generate(
+    system_prompt="...",
+    user_prompt="...",
+    model="ollama/neural-chat",  # Override for this call
 )
 ```
+
+Default model: `xai/grok-4-1-fast-reasoning`
+
+### Usage Tracking
+
+All LLM calls are tracked to the `llm_usage` table for cost analysis:
+- user_id, reading_id (for association)
+- model, provider (for segmentation)
+- input_tokens, output_tokens, cost_usd (for billing)
+- latency_ms (for performance monitoring)
 
 ## Consequences
 

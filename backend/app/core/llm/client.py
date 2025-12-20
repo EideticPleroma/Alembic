@@ -1,13 +1,17 @@
-"""LLM client for tarot interpretation.
+"""LLM client for tarot interpretation using litellm.
 
-Supports both local (Ollama) and cloud (Grok) providers.
+Supports multiple providers (Ollama, xAI Grok, etc.) with unified interface.
+Tracks usage metrics and costs to database for ops analysis.
 """
 
+import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Any
 
-import httpx
+import litellm
 import structlog
+from litellm import acompletion
 
 logger = structlog.get_logger(__name__)
 
@@ -22,22 +26,176 @@ class LLMResponse:
     output_tokens: int
     total_tokens: int
     cost_usd: float
+    latency_ms: int
 
     def __str__(self) -> str:
         """Return the content for backwards compatibility."""
         return self.content
 
 
-class LLMClient(ABC):
-    """Abstract base class for LLM providers."""
+class UsageTracker(ABC):
+    """Abstract base for tracking LLM usage to different backends."""
 
     @abstractmethod
-    async def generate(self, system_prompt: str, user_prompt: str) -> LLMResponse:
-        """Generate a completion from the LLM.
+    async def track(
+        self,
+        user_id: str | None,
+        reading_id: str | None,
+        model: str,
+        provider: str,
+        input_tokens: int,
+        output_tokens: int,
+        cost_usd: float,
+        latency_ms: int,
+    ) -> None:
+        """Track LLM usage metrics.
+
+        Args:
+            user_id: User making the request (optional)
+            reading_id: Associated reading ID (optional)
+            model: Model name
+            provider: Provider name
+            input_tokens: Number of input tokens
+            output_tokens: Number of output tokens
+            cost_usd: Cost in USD
+            latency_ms: Latency in milliseconds
+        """
+        pass
+
+
+class DatabaseUsageTracker(UsageTracker):
+    """Track usage to Supabase database for ops analysis."""
+
+    def __init__(self, supabase_client: Any) -> None:
+        """Initialize with Supabase client.
+
+        Args:
+            supabase_client: Initialized Supabase client
+        """
+        self.supabase = supabase_client
+
+    async def track(
+        self,
+        user_id: str | None,
+        reading_id: str | None,
+        model: str,
+        provider: str,
+        input_tokens: int,
+        output_tokens: int,
+        cost_usd: float,
+        latency_ms: int,
+    ) -> None:
+        """Track usage to llm_usage table."""
+        try:
+            self.supabase.table("llm_usage").insert(
+                {
+                    "user_id": user_id,
+                    "reading_id": reading_id,
+                    "model": model,
+                    "provider": provider,
+                    "input_tokens": input_tokens,
+                    "output_tokens": output_tokens,
+                    "total_tokens": input_tokens + output_tokens,
+                    "cost_usd": float(cost_usd),
+                    "latency_ms": latency_ms,
+                }
+            ).execute()
+
+            logger.info(
+                "llm_usage_tracked",
+                model=model,
+                provider=provider,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                cost_usd=f"${cost_usd:.6f}",
+                latency_ms=latency_ms,
+                user_id=user_id,
+                reading_id=reading_id,
+            )
+        except Exception as e:
+            logger.error("failed_to_track_llm_usage", error=str(e))
+            # Don't raise - usage tracking failure shouldn't break the reading
+
+
+class LoggingUsageTracker(UsageTracker):
+    """Track usage to structured logs only (for development)."""
+
+    async def track(
+        self,
+        user_id: str | None,
+        reading_id: str | None,
+        model: str,
+        provider: str,
+        input_tokens: int,
+        output_tokens: int,
+        cost_usd: float,
+        latency_ms: int,
+    ) -> None:
+        """Track usage to logs."""
+        logger.info(
+            "llm_usage_tracked",
+            model=model,
+            provider=provider,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            total_tokens=input_tokens + output_tokens,
+            cost_usd=f"${cost_usd:.6f}",
+            latency_ms=latency_ms,
+            user_id=user_id,
+            reading_id=reading_id,
+        )
+
+
+class LLMService:
+    """Unified LLM service using litellm for provider abstraction."""
+
+    def __init__(
+        self,
+        default_model: str,
+        usage_tracker: UsageTracker | None = None,
+    ) -> None:
+        """Initialize LLM service.
+
+        Args:
+            default_model: Default model in litellm format (e.g., "ollama/neural-chat")
+            usage_tracker: Optional tracker for usage metrics
+        """
+        self.default_model = default_model
+        self.usage_tracker = usage_tracker or LoggingUsageTracker()
+
+        # Configure litellm logging
+        litellm.set_verbose = False
+
+    def _extract_provider_and_model(self, model_string: str) -> tuple[str, str]:
+        """Extract provider and model name from litellm format.
+
+        Args:
+            model_string: Format like "ollama/neural-chat" or "xai/grok-beta"
+
+        Returns:
+            Tuple of (provider, model_name)
+        """
+        if "/" in model_string:
+            provider, model_name = model_string.split("/", 1)
+            return provider, model_name
+        return "unknown", model_string
+
+    async def generate(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        model: str | None = None,
+        user_id: str | None = None,
+        reading_id: str | None = None,
+    ) -> LLMResponse:
+        """Generate a completion from LLM.
 
         Args:
             system_prompt: System context for the model
             user_prompt: User's message/question
+            model: Optional model override (in litellm format)
+            user_id: Optional user ID for tracking
+            reading_id: Optional reading ID for tracking
 
         Returns:
             LLMResponse: Model's response with usage metrics
@@ -45,251 +203,121 @@ class LLMClient(ABC):
         Raises:
             Exception: If the LLM call fails
         """
-        pass
+        model_to_use = model or self.default_model
 
-
-class OllamaClient(LLMClient):
-    """Client for local Ollama models.
-
-    Uses the Ollama API running locally (default: http://localhost:11434).
-    """
-
-    def __init__(
-        self, base_url: str = "http://localhost:11434", model: str = "neural-chat"
-    ):
-        """Initialize Ollama client.
-
-        Args:
-            base_url: Base URL of Ollama API
-            model: Model name to use (must be pulled in Ollama)
-        """
-        self.base_url = base_url
-        self.model = model
-        self.client = httpx.AsyncClient(timeout=120.0)
-
-    async def generate(self, system_prompt: str, user_prompt: str) -> LLMResponse:
-        """Generate response using Ollama.
-
-        Args:
-            system_prompt: System context
-            user_prompt: User message
-
-        Returns:
-            LLMResponse: Model response with usage metrics
-        """
         try:
-            response = await self.client.post(
-                f"{self.base_url}/api/generate",
-                json={
-                    "model": self.model,
-                    "prompt": user_prompt,
-                    "system": system_prompt,
-                    "stream": False,
-                    "temperature": 0.7,
-                },
+            start_time = time.time()
+
+            response = await acompletion(
+                model=model_to_use,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.7,
+                timeout=120,
             )
-            response.raise_for_status()
 
-            result = response.json()
-            response_text = result.get("response", "")
+            latency_ms = int((time.time() - start_time) * 1000)
 
-            # Ollama provides token counts in response
-            input_tokens = result.get("prompt_eval_count", 0)
-            output_tokens = result.get("eval_count", 0)
+            # Extract content
+            content = response.choices[0].message.content
 
-            llm_response = LLMResponse(
-                content=str(response_text).strip(),
-                model=self.model,
+            # Extract token usage
+            usage = response.usage
+            input_tokens = usage.prompt_tokens
+            output_tokens = usage.completion_tokens
+            total_tokens = usage.total_tokens
+
+            # Calculate cost using litellm's built-in calculation
+            cost_usd = litellm.completion_cost(response)
+
+            # Extract provider and model name for tracking
+            provider, model_name = self._extract_provider_and_model(model_to_use)
+
+            # Track usage
+            await self.usage_tracker.track(
+                user_id=user_id,
+                reading_id=reading_id,
+                model=model_name,
+                provider=provider,
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
-                total_tokens=input_tokens + output_tokens,
-                cost_usd=0.0,  # Local models are free
+                cost_usd=cost_usd,
+                latency_ms=latency_ms,
             )
-
-            logger.info(
-                "ollama_generation_complete",
-                model=self.model,
-                input_tokens=input_tokens,
-                output_tokens=output_tokens,
-                total_tokens=llm_response.total_tokens,
-                cost_usd=0.0,
-            )
-
-            return llm_response
-
-        except Exception as e:
-            logger.error("ollama_error", error=str(e), model=self.model)
-            raise
-
-    async def check_health(self) -> bool:
-        """Check if Ollama is running and model is available.
-
-        Returns:
-            bool: True if healthy, False otherwise
-        """
-        try:
-            response = await self.client.get(f"{self.base_url}/api/tags")
-            if response.status_code == 200:
-                tags = response.json().get("models", [])
-                model_names = [m.get("name", "").split(":")[0] for m in tags]
-                return self.model in model_names
-            return False
-        except Exception:
-            return False
-
-    async def close(self) -> None:
-        """Close the HTTP client."""
-        await self.client.aclose()
-
-
-class GrokClient(LLMClient):
-    """Client for xAI Grok API.
-
-    Production LLM provider. Requires XAI_API_KEY environment variable.
-    """
-
-    # Grok pricing per 1M tokens (as of Dec 2024)
-    # grok-4-1-fast-reasoning: $5/1M input, $15/1M output
-    PRICING = {"input": 5.0, "output": 15.0}
-
-    def __init__(self, api_key: str):
-        """Initialize Grok client.
-
-        Args:
-            api_key: xAI API key
-        """
-        self.api_key = api_key
-        self.base_url = "https://api.x.ai/v1"
-        self.model = "grok-4-1-fast-reasoning"
-        self.client = httpx.AsyncClient(timeout=60.0)
-
-    def _calculate_cost(self, input_tokens: int, output_tokens: int) -> float:
-        """Calculate cost in USD based on token usage.
-
-        Args:
-            input_tokens: Number of input tokens
-            output_tokens: Number of output tokens
-
-        Returns:
-            float: Cost in USD
-        """
-        input_cost = (input_tokens / 1_000_000) * self.PRICING["input"]
-        output_cost = (output_tokens / 1_000_000) * self.PRICING["output"]
-        return input_cost + output_cost
-
-    async def generate(self, system_prompt: str, user_prompt: str) -> LLMResponse:
-        """Generate response using Grok API.
-
-        Args:
-            system_prompt: System context
-            user_prompt: User message
-
-        Returns:
-            LLMResponse: Model response with usage metrics
-        """
-        try:
-            response = await self.client.post(
-                f"{self.base_url}/chat/completions",
-                headers={"Authorization": f"Bearer {self.api_key}"},
-                json={
-                    "model": self.model,
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt},
-                    ],
-                    "temperature": 0.7,
-                    "max_tokens": 1024,
-                },
-            )
-            response.raise_for_status()
-
-            result = response.json()
-            content = result["choices"][0]["message"]["content"]
-
-            # Extract token usage from response
-            usage = result.get("usage", {})
-            input_tokens = usage.get("prompt_tokens", 0)
-            output_tokens = usage.get("completion_tokens", 0)
-            total_tokens = usage.get("total_tokens", input_tokens + output_tokens)
-
-            cost_usd = self._calculate_cost(input_tokens, output_tokens)
 
             llm_response = LLMResponse(
                 content=str(content).strip(),
-                model=self.model,
+                model=model_to_use,
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
                 total_tokens=total_tokens,
                 cost_usd=cost_usd,
+                latency_ms=latency_ms,
             )
 
             logger.info(
-                "grok_generation_complete",
-                model=self.model,
+                "llm_generation_complete",
+                model=model_to_use,
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
                 total_tokens=total_tokens,
                 cost_usd=f"${cost_usd:.6f}",
+                latency_ms=latency_ms,
             )
 
             return llm_response
 
         except Exception as e:
-            logger.error("grok_error", error=str(e))
+            logger.error(
+                "llm_generation_failed",
+                model=model_to_use,
+                error=str(e),
+            )
             raise
-
-    async def close(self) -> None:
-        """Close the HTTP client."""
-        await self.client.aclose()
 
 
 class LLMFactory:
-    """Factory for creating LLM clients based on configuration."""
+    """Factory for creating LLM service with configuration."""
 
-    _instance: LLMClient | None = None
+    _instance: LLMService | None = None
 
     @classmethod
     def create(
         cls,
-        use_local: bool = True,
-        ollama_base_url: str = "http://localhost:11434",
-        grok_api_key: str | None = None,
-    ) -> LLMClient:
-        """Create an LLM client.
+        default_model: str = "xai/grok-4-1-fast-reasoning",
+        usage_tracker: UsageTracker | None = None,
+    ) -> LLMService:
+        """Create an LLM service.
 
         Args:
-            use_local: Use local Ollama if True, Grok if False
-            ollama_base_url: Base URL for Ollama
-            grok_api_key: API key for Grok
+            default_model: Default model in litellm format
+            usage_tracker: Optional usage tracker
 
         Returns:
-            LLMClient: Configured client instance
+            LLMService: Configured service instance
         """
-        if use_local:
-            return OllamaClient(base_url=ollama_base_url)
-        elif grok_api_key:
-            return GrokClient(api_key=grok_api_key)
-        else:
-            msg = "Grok requires XAI_API_KEY"
-            raise ValueError(msg)
+        return LLMService(default_model=default_model, usage_tracker=usage_tracker)
 
     @classmethod
     def get_instance(
         cls,
-        use_local: bool = True,
-        ollama_base_url: str = "http://localhost:11434",
-        grok_api_key: str | None = None,
-    ) -> LLMClient:
-        """Get or create a singleton LLM client.
+        default_model: str = "xai/grok-4-1-fast-reasoning",
+        usage_tracker: UsageTracker | None = None,
+    ) -> LLMService:
+        """Get or create a singleton LLM service.
 
         Args:
-            use_local: Use local Ollama if True
-            ollama_base_url: Base URL for Ollama
-            grok_api_key: API key for Grok
+            default_model: Default model in litellm format
+            usage_tracker: Optional usage tracker
 
         Returns:
-            LLMClient: Singleton client instance
+            LLMService: Singleton service instance
         """
         if cls._instance is None:
-            cls._instance = cls.create(use_local, ollama_base_url, grok_api_key)
+            cls._instance = cls.create(
+                default_model=default_model,
+                usage_tracker=usage_tracker,
+            )
         return cls._instance

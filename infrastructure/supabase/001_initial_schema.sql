@@ -217,6 +217,43 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- ============================================
+-- 7. LLM USAGE TABLE (ops tracking for cost analysis)
+-- ============================================
+
+CREATE TABLE llm_usage (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    reading_id UUID REFERENCES readings(id) ON DELETE SET NULL,
+    model TEXT NOT NULL,
+    provider TEXT NOT NULL,
+    input_tokens INTEGER NOT NULL,
+    output_tokens INTEGER NOT NULL,
+    total_tokens INTEGER NOT NULL,
+    cost_usd NUMERIC(10, 6) NOT NULL,
+    latency_ms INTEGER NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexes for efficient querying
+CREATE INDEX idx_llm_usage_user_id ON llm_usage(user_id);
+CREATE INDEX idx_llm_usage_reading_id ON llm_usage(reading_id);
+CREATE INDEX idx_llm_usage_created_at ON llm_usage(created_at DESC);
+CREATE INDEX idx_llm_usage_model ON llm_usage(model);
+CREATE INDEX idx_llm_usage_provider ON llm_usage(provider);
+
+-- Enable RLS
+ALTER TABLE llm_usage ENABLE ROW LEVEL SECURITY;
+
+-- Policies: Admin-only access (service role for inserts, no user access to raw data)
+-- Service role can insert usage records
+-- (INSERT is allowed via service role without explicit policy)
+
+-- Prevent users from querying raw llm_usage (ops data only)
+CREATE POLICY "Disable user access to llm_usage"
+ON llm_usage FOR SELECT
+USING (FALSE);
+
+-- ============================================
 -- 8. TRIGGER: Auto-create user profile on signup
 -- ============================================
 

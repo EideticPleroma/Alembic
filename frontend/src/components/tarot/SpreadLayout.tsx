@@ -24,13 +24,13 @@ const SpreadLayout = React.forwardRef<HTMLDivElement, SpreadLayoutProps>(
         case 'one_card':
           return 'flex justify-center items-center';
         case 'three_card':
-          return 'flex justify-center items-center gap-16';
+          return 'flex flex-wrap justify-center items-center gap-8 lg:gap-16';
         case 'shadow_work':
-          return 'flex justify-center items-center gap-12';
+          return 'grid grid-cols-2 gap-x-8 gap-y-12 w-fit mx-auto';
         case 'celtic_cross':
           return 'grid grid-cols-3 gap-8 justify-center items-center w-fit mx-auto';
         default:
-          return 'flex justify-center items-center gap-12';
+          return 'flex flex-wrap justify-center items-center gap-8';
       }
     };
 

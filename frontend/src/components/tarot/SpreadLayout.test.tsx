@@ -57,7 +57,7 @@ describe('SpreadLayout', () => {
       const { container } = render(
         <SpreadLayout spreadType="three_card" cards={mockCards} />
       );
-      const layoutContainer = container.querySelector('.gap-12');
+      const layoutContainer = container.querySelector('.gap-8');
       expect(layoutContainer).toBeInTheDocument();
     });
 
@@ -79,7 +79,7 @@ describe('SpreadLayout', () => {
           cards={mockCards}
         />
       );
-      const layoutContainer = container.querySelector('.gap-8');
+      const layoutContainer = container.querySelector('.grid-cols-2');
       expect(layoutContainer).toBeInTheDocument();
     });
 
