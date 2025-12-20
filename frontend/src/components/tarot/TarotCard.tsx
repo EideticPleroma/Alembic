@@ -47,19 +47,12 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
             transformStyle: 'preserve-3d',
           }}
         >
-          {/* Reversed Label - Absolutely positioned so it doesn't affect layout */}
-          {isRevealed && isReversed && (
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-gold text-xs font-bold text-center whitespace-nowrap z-20">
-              Reversed
-            </div>
-          )}
-
           {isRevealed ? (
             <div
               className={cn(
                 'relative w-full h-full rounded-lg border-2 border-gold/50',
                 'bg-gradient-to-br from-midnight/80 to-midnight/60',
-                'overflow-hidden shadow-lg transition-all duration-300'
+                'overflow-visible shadow-lg transition-all duration-300'
               )}
             >
               {/* Radial gradient overlay */}
@@ -76,6 +69,13 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
                 alt={card.name}
                 className="absolute inset-0 w-full h-full object-cover rounded opacity-90 hover:opacity-100 transition-opacity"
               />
+
+              {/* Reversed Label - Positioned at bottom of card frame, appears on top when rotated */}
+              {isReversed && (
+                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-gold text-xs font-bold text-center whitespace-nowrap z-20">
+                  Reversed
+                </div>
+              )}
             </div>
           ) : (
             <div className="w-full h-full rounded-lg border-2 border-gold/50 bg-gradient-to-br from-gold/20 to-gold/10 flex items-center justify-center shadow-lg">
