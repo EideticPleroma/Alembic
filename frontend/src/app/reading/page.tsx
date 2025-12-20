@@ -14,18 +14,34 @@ import { Reading, Spread, SpreadType, CardInReading } from '@/lib/types';
  * Handles both ## headers and ### headers, with fallbacks for unstructured content.
  */
 function InterpretationContent({ content }: { content: string }) {
-  // Helper to render card sections (### headers)
+  // Helper to render card sections (handles ### headers or "Position: Card" patterns)
   const renderCardSections = (text: string) => {
-    const cardSections = text.split(/### /).filter(Boolean);
+    // Try splitting by ### first
+    let cardSections = text.split(/### /).filter(Boolean);
+    
+    // If only one section or no ###, try splitting by position keywords
+    if (cardSections.length <= 1) {
+      // Split by common position patterns: "Past:", "Present:", "Future:" at line start
+      cardSections = text
+        .split(/(?=(?:^|\n)(?:Past|Present|Future|Shadow|Light|Conscious|Unconscious|Outcome):\s*)/i)
+        .filter(Boolean);
+    }
     
     return (
       <div className="space-y-4">
         {cardSections.map((cardSection, idx) => {
-          const cardLines = cardSection.split('\n');
-          const cardTitle = cardLines[0].trim();
-          const cardBody = cardLines.slice(1).join('\n').trim();
+          const cardLines = cardSection.trim().split('\n');
+          let cardTitle = cardLines[0].trim();
+          let cardBody = cardLines.slice(1).join('\n').trim();
+          
+          // If the title contains the body (single line with "Position: Card Name\nBody")
+          // Try to extract position and card name
+          const positionMatch = cardTitle.match(/^(Past|Present|Future|Shadow|Light|Conscious|Unconscious|Outcome):\s*(.+)/i);
+          if (positionMatch) {
+            cardTitle = `${positionMatch[1]}: ${positionMatch[2]}`;
+          }
 
-          if (!cardBody) return null;
+          if (!cardBody && !positionMatch) return null;
 
           return (
             <div key={idx} className="bg-midnight/30 rounded-lg p-4 border border-gold/10">
@@ -84,8 +100,8 @@ function InterpretationContent({ content }: { content: string }) {
 
   // Check if content has ## headers
   const hasMainHeaders = content.includes('## ');
-  // Check if content has ### headers (card sections)
-  const hasCardHeaders = content.includes('### ');
+  // Check if content has ### headers (card sections) or position keywords
+  const hasCardHeaders = content.includes('### ') || /(?:^|\n)(?:Past|Present|Future):\s*/i.test(content);
 
   // If we have ## headers, split by them
   if (hasMainHeaders) {
