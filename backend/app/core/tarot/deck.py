@@ -2,6 +2,8 @@
 
 This module provides the Tarot Deck class for managing the 78-card deck,
 drawing random cards, and managing spread positions.
+
+Cards data includes: keywords, archetype, hermetic_principle for all cards.
 """
 
 import copy
