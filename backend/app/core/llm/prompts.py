@@ -38,30 +38,32 @@ Remember: You are a guide to the querent's own wisdom. The cards are the message
 - **Present** (Current energy): {present_card} {present_reversal}
 - **Future** (Emerging potential): {future_card} {future_reversal}
 
-CRITICAL: Provide your interpretation using EXACTLY this markdown structure. Do not deviate. Start each section with the exact header shown.
+You MUST format your response EXACTLY as shown below. Copy the headers exactly. Do not skip any section.
+
+---BEGIN FORMAT---
 
 ## The Cards Speak
 
 ### Past: {past_card}
-Write 2-3 sentences interpreting this card in the Past position. Relate it to the querent's foundation and what has led them here. Use "you" language.
+[Your 2-3 sentence interpretation of the Past card here]
 
 ### Present: {present_card}
-Write 2-3 sentences interpreting this card in the Present position. Address the current energy and situation directly. Use "you" language.
+[Your 2-3 sentence interpretation of the Present card here]
 
 ### Future: {future_card}
-Write 2-3 sentences interpreting this card in the Future position. Illuminate emerging potential and pathways. Use "you" language.
+[Your 2-3 sentence interpretation of the Future card here]
 
 ## The Weaving
-Write 3-4 sentences showing how the three cards speak to each other as a unified narrative. Connect the threads between past, present, and future. Show the arc of the querent's journey.
+[Your 3-4 sentence narrative connecting all three cards here]
 
 ## Reflection Questions
-- What does the {past_card} reveal about your foundation that you may have overlooked?
-- How is the {present_card} showing up in your current choices and energy?
-- What invitation does the {future_card} extend if you align with its energy?
+- [First question about the past card]
+- [Second question about the present card]
+- [Third question about the future card]
 
----
+---END FORMAT---
 
-Speak directly to the querent using "you" language. Be wise but warm. Honor both light and shadow."""
+Replace the bracketed placeholders with your actual interpretation. Keep all ## and ### headers exactly as shown. Speak directly to the querent using "you" language. Be wise but warm."""
 
     FOLLOW_UP_TEMPLATE = """The seeker is continuing their reading with a follow-up question.
 
