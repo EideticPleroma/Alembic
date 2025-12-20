@@ -25,13 +25,33 @@ function InterpretationContent({ content }: { content: string }) {
       return null;
     }
 
-    // Handle Reflection Questions section (bullet points)
+    // Handle Reflection Questions section (bullet points or numbered lists)
     if (headerTitle.toLowerCase().includes('reflection question')) {
-      const bulletParts = bodyLines.split(/\n- /).filter(Boolean);
-      const introText = bulletParts[0]?.includes('?') ? '' : bulletParts[0];
-      const bullets = introText 
-        ? bulletParts.slice(1).map((b) => b.replace(/^- /, '').trim())
-        : bulletParts.map((b) => b.replace(/^- /, '').trim());
+      // Try to parse as bullet points (- item) or numbered list (1. item)
+      let bullets: string[] = [];
+      
+      // Check for bullet points
+      if (bodyLines.includes('\n- ') || bodyLines.startsWith('- ')) {
+        const bulletParts = bodyLines.split(/\n- /).filter(Boolean);
+        const introText = bulletParts[0]?.includes('?') ? '' : bulletParts[0];
+        bullets = introText 
+          ? bulletParts.slice(1).map((b) => b.replace(/^- /, '').trim())
+          : bulletParts.map((b) => b.replace(/^- /, '').trim());
+      }
+      // Check for numbered list (1. 2. 3. etc)
+      else if (/\d+\.\s/.test(bodyLines)) {
+        bullets = bodyLines
+          .split(/\n?\d+\.\s+/)
+          .filter(Boolean)
+          .map((b) => b.trim());
+      }
+      // Fallback: split by newlines if no pattern found
+      else {
+        bullets = bodyLines
+          .split('\n')
+          .filter((line) => line.trim().length > 0)
+          .map((b) => b.trim());
+      }
 
       return (
         <div key={headerTitle} className="mb-6">
