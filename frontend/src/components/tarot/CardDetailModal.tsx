@@ -83,14 +83,15 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({
                     'relative w-40 aspect-[2/3] rounded-lg border-2 border-gold/50',
                     'bg-gradient-to-br from-midnight/80 to-midnight/60',
                     'overflow-hidden shadow-lg',
+                    'flex items-center justify-center p-1',
                     isReversed && 'rotate-180'
                   )}
                 >
-                  <div className="absolute inset-0 rounded-lg opacity-20 pointer-events-none z-10 bg-radial from-gold/30 to-transparent" />
+                  <div className="absolute inset-1 rounded-lg opacity-20 pointer-events-none z-10 bg-radial from-gold/30 to-transparent" />
                   <img
                     src={card.image_url}
                     alt={card.name}
-                    className="absolute inset-0 w-full h-full object-cover opacity-90"
+                    className="relative z-0 w-full h-full object-contain rounded opacity-90"
                   />
                 </div>
               </div>

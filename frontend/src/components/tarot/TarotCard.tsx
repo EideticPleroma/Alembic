@@ -53,7 +53,7 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
                 'relative w-full h-full rounded-lg border-2 border-gold/50',
                 'bg-gradient-to-br from-midnight/80 to-midnight/60',
                 'overflow-hidden shadow-lg transition-all duration-300',
-                'p-1'
+                'flex items-center justify-center p-1'
               )}
             >
               {/* Radial gradient overlay */}
@@ -64,11 +64,11 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
                 )}
               />
 
-              {/* Card image fills the entire container with padding */}
+              {/* Card image - fits to container */}
               <img
                 src={card.image_url}
                 alt={card.name}
-                className="absolute inset-1 w-[calc(100%-0.5rem)] h-[calc(100%-0.5rem)] object-contain rounded opacity-90 hover:opacity-100 transition-opacity"
+                className="relative z-0 w-full h-full object-contain rounded opacity-90 hover:opacity-100 transition-opacity"
               />
 
               {/* Reversed Label - Positioned at bottom of card frame, appears on top when rotated */}
