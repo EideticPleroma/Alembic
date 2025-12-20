@@ -48,36 +48,38 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
           }}
         >
           {isRevealed ? (
-            <div
-              className={cn(
-                'relative w-full h-full rounded-lg border-2 border-gold/50',
-                'bg-gradient-to-br from-midnight/80 to-midnight/60',
-                'overflow-hidden shadow-lg transition-all duration-300',
-                'flex items-center justify-center p-1'
-              )}
-            >
-              {/* Radial gradient overlay */}
+            <>
               <div
                 className={cn(
-                  'absolute inset-1 rounded-lg opacity-20 pointer-events-none z-10',
-                  'bg-radial from-gold/30 to-transparent'
+                  'relative w-full h-full rounded-lg border-2 border-gold/50',
+                  'bg-gradient-to-br from-midnight/80 to-midnight/60',
+                  'overflow-hidden shadow-lg transition-all duration-300',
+                  'flex items-center justify-center p-1'
                 )}
-              />
+              >
+                {/* Radial gradient overlay */}
+                <div
+                  className={cn(
+                    'absolute inset-1 rounded-lg opacity-20 pointer-events-none z-10',
+                    'bg-radial from-gold/30 to-transparent'
+                  )}
+                />
 
-              {/* Card image - fits to container */}
-              <img
-                src={card.image_url}
-                alt={card.name}
-                className="relative z-0 w-full h-full object-contain rounded opacity-90 hover:opacity-100 transition-opacity"
-              />
+                {/* Card image - fits to container */}
+                <img
+                  src={card.image_url}
+                  alt={card.name}
+                  className="relative z-0 w-full h-full object-contain rounded opacity-90 hover:opacity-100 transition-opacity"
+                />
+              </div>
 
-              {/* Reversed Label - Positioned at bottom of card frame, appears on top when rotated */}
+              {/* Reversed Label - Outside overflow-hidden container, at bottom (appears on top when rotated) */}
               {isReversed && (
                 <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-gold text-xs font-bold text-center whitespace-nowrap z-20 -rotate-180">
                   Reversed
                 </div>
               )}
-            </div>
+            </>
           ) : (
             <div className="w-full h-full rounded-lg border-2 border-gold/50 bg-gradient-to-br from-gold/20 to-gold/10 flex items-center justify-center shadow-lg">
               <div className="text-center">
