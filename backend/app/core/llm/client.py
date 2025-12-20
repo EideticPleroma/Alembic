@@ -149,23 +149,18 @@ class GrokClient(LLMClient):
     """
 
     # Grok pricing per 1M tokens (as of Dec 2024)
-    # grok-beta: $5/1M input, $15/1M output
-    # grok-2-1212: $2/1M input, $10/1M output
-    PRICING = {
-        "grok-beta": {"input": 5.0, "output": 15.0},
-        "grok-2-1212": {"input": 2.0, "output": 10.0},
-    }
+    # grok-4-1-fast-reasoning: $5/1M input, $15/1M output
+    PRICING = {"input": 5.0, "output": 15.0}
 
-    def __init__(self, api_key: str, model: str = "grok-beta"):
+    def __init__(self, api_key: str):
         """Initialize Grok client.
 
         Args:
             api_key: xAI API key
-            model: Grok model to use (grok-beta or grok-2-1212)
         """
         self.api_key = api_key
         self.base_url = "https://api.x.ai/v1"
-        self.model = model
+        self.model = "grok-4-1-fast-reasoning"
         self.client = httpx.AsyncClient(timeout=60.0)
 
     def _calculate_cost(self, input_tokens: int, output_tokens: int) -> float:
@@ -178,9 +173,8 @@ class GrokClient(LLMClient):
         Returns:
             float: Cost in USD
         """
-        pricing = self.PRICING.get(self.model, self.PRICING["grok-beta"])
-        input_cost = (input_tokens / 1_000_000) * pricing["input"]
-        output_cost = (output_tokens / 1_000_000) * pricing["output"]
+        input_cost = (input_tokens / 1_000_000) * self.PRICING["input"]
+        output_cost = (output_tokens / 1_000_000) * self.PRICING["output"]
         return input_cost + output_cost
 
     async def generate(self, system_prompt: str, user_prompt: str) -> LLMResponse:
