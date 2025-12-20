@@ -72,7 +72,7 @@ const TarotCard = React.forwardRef<HTMLDivElement, TarotCardProps>(
 
               {/* Reversed Label - Positioned at bottom of card frame, appears on top when rotated */}
               {isReversed && (
-                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-gold text-xs font-bold text-center whitespace-nowrap z-20">
+                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-gold text-xs font-bold text-center whitespace-nowrap z-20 -rotate-180">
                   Reversed
                 </div>
               )}
